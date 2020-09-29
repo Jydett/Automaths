@@ -162,7 +162,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 							try {
 								getModel().beginUpdate();
 								List<mxPoint> points = geo.getPoints();
-								if (points != null && !points.isEmpty()){
+								if (points != null && !points.isEmpty()) {
 									geo = (mxGeometry) geo.clone();
 									geo.setPoints(null);
 									getModel().setGeometry(unFils, geo);
@@ -184,7 +184,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	}
 
 	public Object insertVertex(Object parent, String id, Object value,
-			double x, double y, double width, double height, String style,boolean accepted,boolean initial){
+			double x, double y, double width, double height, String style,boolean accepted,boolean initial) {
 		return insertVertex(parent, id, value, x, y, width, height, style,
 				false,accepted,initial);
 	}
@@ -197,12 +197,12 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	}
 
 	public Object createVertex(Object parent, String id, Object value,double x, double y, double width, 
-			double height, String style,boolean relative,boolean accepted,boolean initial){
+			double height, String style,boolean relative,boolean accepted,boolean initial) {
 		Object valueInfo = new StateInfo(accepted, initial,value.toString());
 		return super.createVertex(parent, id,valueInfo,x,y,  width, height, style,relative);
 	}
 	public Object createVertex(Object parent, String id, Object value,double x, double y, double width, 
-			double height, String style,boolean relative){
+			double height, String style,boolean relative) {
 		return createVertex(parent,id,value,x,y,width,height,style,relative,false,false);
 	}
 
@@ -212,8 +212,8 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		return super.createEdge(parent,id,v,source, target,style);
 	}
 
-	public String convertValueToString(Object cell){
-		if (cell instanceof mxCell){
+	public String convertValueToString(Object cell) {
+		if (cell instanceof mxCell) {
 			Object value = ((mxCell) cell).getValue();
 			if (value instanceof CellInfo)
 				return ((CellInfo)value).getLabel();
@@ -229,50 +229,50 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	}
 
 	
-	public void deleteAllElements(){
+	public void deleteAllElements() {
 		removeCells(getChildVertices(getDefaultParent()));
 	}
 	
-	public Set<mxCell> getAllState(){
+	public Set<mxCell> getAllState() {
 		Object[] listOfCell = getChildCells(getDefaultParent());
 		Set<mxCell> listOfState = new HashSet<>();
-		for(Object currentCell : listOfCell){
-			if (((mxCell)currentCell).isVertex()){
+		for(Object currentCell : listOfCell) {
+			if (((mxCell)currentCell).isVertex()) {
 				listOfState.add(((mxCell) currentCell));
 			}
 		}
 		return listOfState;
 	}
 	
-	public Set<mxCell> getAllTransition(){
+	public Set<mxCell> getAllTransition() {
 		Object[] listOfCell = getChildCells(getDefaultParent());
 		Set<mxCell> transitions = new HashSet<>();
-		for(Object currentCell : listOfCell){
-			if (((mxCell)currentCell).isEdge()){
+		for(Object currentCell : listOfCell) {
+			if (((mxCell)currentCell).isEdge()) {
 				transitions.add(((mxCell) currentCell));
 			}
 		}
 		return transitions;
 	}
 	
-	public Object insertEdge(String c, Object source, Object target){
+	public Object insertEdge(String c, Object source, Object target) {
 		return insertEdge(getDefaultParent(), null,
 				c, source, target, FiniteStateAutomatonGraph.styleTransition);
 	}
 	
-	public void minimize(){
+	public void minimize() {
 		generateGraphWithAutomaton(automaton.minimize(getAllState(), getAllTransition()),true);
 	}
 	
-	public void determinize(){
+	public void determinize() {
 		generateGraphWithAutomaton(automaton.determinize(getAllState(), getAllTransition()),true);
 	}
 	
-	public void importerExpReg(String text){
+	public void importerExpReg(String text) {
 		generateGraphWithAutomaton(automaton.generateAutomateWithExpReg(text),false);
 	}
 	
-	private void generateGraphWithAutomaton(Automaton automate, boolean delParent){
+	private void generateGraphWithAutomaton(Automaton automate, boolean delParent) {
 		removeCells(getChildVertices(getDefaultParent()));
 		getModel().beginUpdate();
 		Set<State> listOfState = automate.getStates();
@@ -296,7 +296,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 			i++;
 		}
 		
-		for (State currentStateOfAutomate : listOfState){
+		for (State currentStateOfAutomate : listOfState) {
 			Object source = cellMap.get(currentStateOfAutomate.hashCode());
 			Set<Transition> listOfTransition = currentStateOfAutomate.getTransitions();
 			for (Transition currentTransitionOfAutomate : listOfTransition) {
@@ -317,14 +317,14 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		return automaton;
 	}
 
-	public Object addEdge(String c, Object source, Object target){
+	public Object addEdge(String c, Object source, Object target) {
 		getModel().beginUpdate();
 		Object obj = insertEdge(getDefaultParent(), null, c, source, target, styleTransition);
 		getModel().endUpdate();
 		return obj;
 	}
 	
-	public Object addState(String id, double x, double y, boolean accept, boolean initial){
+	public Object addState(String id, double x, double y, boolean accept, boolean initial) {
 		String style;
 		if (accept && initial) {
 			style = styleFinalBeginState;

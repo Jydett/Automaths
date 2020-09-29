@@ -24,6 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.util.mxGraphActions;
+import lombok.RequiredArgsConstructor;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -160,6 +161,23 @@ public class EditorActions {
 					}
 				}
 			});
+		}
+	}
+
+	public static class ReorderAction extends AbstractAction {
+		private final boolean isBack;
+
+		public ReorderAction(String name, boolean isBack) {
+			super(name);
+			this.isBack = isBack;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			mxGraph graph = getEditor(e).getGraphComponent().getGraph();
+			graph.getModel().beginUpdate();
+			graph.orderCells(isBack, graph.getSelectionCells());
+			graph.getModel().endUpdate();
 		}
 	}
 	

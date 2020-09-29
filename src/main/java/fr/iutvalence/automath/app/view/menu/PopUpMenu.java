@@ -20,18 +20,15 @@ public class PopUpMenu extends JPopupMenu {
 	/**The description about a component*/
 	public CellDescriptorPane descriptor;
 	/** The GUI interface pannel*/
-	private GUIPanel editor;
-	/** To set the state in begin state*/
-	private SetInitialAction setInitial;
-	/** To set the state in final state*/
-	private SetFinalAction setFinal;
+	private final GUIPanel editor;
+
 	/**
 	 * Build the popup menu about a state
 	 * @param editor
 	 * @param cell
 	 * @param type
 	 */
-	public PopUpMenu(GUIPanel editor,mxCell cell,TargetType type){
+	public PopUpMenu(GUIPanel editor,mxCell cell,TargetType type) {
     	super();
     	this.editor = editor;
     	this.descriptor = editor.getCellDescriptorPanel();
@@ -50,16 +47,14 @@ public class PopUpMenu extends JPopupMenu {
 	 * @param cell
 	 * @param type
 	 */
-	public void update(mxCell cell,TargetType type) {
+	public void update(mxCell cell, TargetType type) {
 		switch(type) {
 			case State :
 				StateInfo stInfo =(StateInfo)cell.getValue();
-		    	setInitial = new SetInitialAction(mxResources.get("SetInitial"));
-		    	add(setInitial).setSelected(stInfo.isStarting);
-
-		    	setFinal = new SetFinalAction(mxResources.get("SetFinal"));
-		    	add(setFinal).setSelected(stInfo.isAccepting);
-	    	
+		    	add(new SetInitialAction(mxResources.get("SetInitial"))).setSelected(stInfo.isStarting);
+		    	add(new SetFinalAction(mxResources.get("SetFinal"))).setSelected(stInfo.isAccepting);
+	    		add(new ReorderAction(mxResources.get("ToFront"), false));
+	    		add(new ReorderAction(mxResources.get("ToBack"), true));
 		    	addSeparator();
 			case Transition :
 		        add(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(),"/img/icon/copy.gif"));
