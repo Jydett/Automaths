@@ -105,30 +105,29 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		String prop = e.getPropertyName();
-		if (prop == JFileChooser.SELECTED_FILE_CHANGED_PROPERTY) {
+		if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(e.getPropertyName())) {
 			f = (File) e.getNewValue();
 			if (f == null)
 				return;
 			if (isShowing()) {
 				loadImage();
 				removeAll();
-				if (f == null)
-					return;
-				// fichiers *.xml
-				else if (f.getName().endsWith(".xml")) {
+				if (f != null) {
+					if (f.getName().endsWith(".xml")) {
 
-					taskThread.run(new ExportImageSinceXMLRunnable(f.getAbsolutePath(),this,automaton));
+						taskThread.run(new ExportImageSinceXMLRunnable(f.getAbsolutePath(),this,automaton));
+					}
+					else if (f.getName().endsWith(".png")) {
+						loadImage();
+					}
+					else if (f.getName().endsWith(".jpg")) {
+						loadImage();
+					}
+					else {
+						image = null;
+					}
 				}
-				else if (f.getName().endsWith(".png")) {
-					loadImage();
-				}
-				else if (f.getName().endsWith(".jpg")) {
-					loadImage();
-				}
-				else {
-					image = null;
-				}
+				// fichiers *.xml
 			}
 		}
 	}
@@ -157,6 +156,6 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	 * @param y The ordinates
 	 */
 	public void sizePreview(int x, int y){
-		setPreferredSize(new Dimension(new Integer(x/4), new Integer(y/4)));
+		setPreferredSize(new Dimension(x / 4, y / 4));
 	}
 }

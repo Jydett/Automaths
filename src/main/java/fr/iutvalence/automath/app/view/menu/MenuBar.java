@@ -35,25 +35,25 @@ public abstract class MenuBar extends JMenuBar {
 	
 	private void init() {
 		JMenu menu = add(new JMenu(mxResources.get("File")));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("New"), new NewAction(), "/img/icon/new.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("New"), new NewAction(), "/img/icon/new.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)));
 		addItemsToFile(menu);
 		menu.addSeparator();
 		menu.add(editor.bind(mxResources.get("Exit"), new ExitAction(), "/img/icon/exit.gif"));
 		
 		menu = add(new JMenu(mxResources.get("Edit")));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Undo"), new HistoryAction(true), "/img/icon/undo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));	
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Redo"), new HistoryAction(false), "/img/icon/redo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Undo"), new HistoryAction(true), "/img/icon/undo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Redo"), new HistoryAction(false), "/img/icon/redo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK)));
 		menu.addSeparator();
 		menu.add(editor.bind(mxResources.get("parallelEdges"), editor.graphLayout("parallelEdges"), "/img/icon/parrallel.gif"));
 		menu.addSeparator();
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Cut"), TransferHandler.getCutAction(), "/img/icon/cut.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK)));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(), "/img/icon/copy.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK)));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(), "/img/icon/paste.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Cut"), TransferHandler.getCutAction(), "/img/icon/cut.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(), "/img/icon/copy.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(), "/img/icon/paste.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK)));
 		menu.addSeparator();
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Delete"), mxGraphActions.getDeleteAction(), "/img/icon/delete.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0)));
 		menu.addSeparator();
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectAll"), mxGraphActions.getSelectAllAction(), "/img/icon/select.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK)));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectNone"), mxGraphActions.getSelectNoneAction(), "/img/icon/deselectAll.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectAll"), mxGraphActions.getSelectAllAction(), "/img/icon/select.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectNone"), mxGraphActions.getSelectNoneAction(), "/img/icon/deselectAll.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)));
 
 		menu = add(new JMenu(mxResources.get("Layout")));
 		menu.add(editor.bind(mxResources.get("organicLayout"), new OrganicAction(), "/img/icon/organic.gif"));

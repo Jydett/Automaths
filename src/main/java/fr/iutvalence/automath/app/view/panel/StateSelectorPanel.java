@@ -71,7 +71,7 @@ public class StateSelectorPanel extends JPanel {
 		mxCell cell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleDefaultState);
 		mxRectangle bounds = (mxGeometry) cell.getGeometry().clone();
 		
-		graph.getModel().setValue(cell,(Object) new StateInfo(false, false, ""));
+		graph.getModel().setValue(cell, new StateInfo(false, false, ""));
 		
 		final mxGraphTransferable t = new mxGraphTransferable(new Object[] { cell }, bounds);
 		
@@ -79,7 +79,7 @@ public class StateSelectorPanel extends JPanel {
 		mxRectangle boundsb = (mxGeometry) beginCell.getGeometry().clone();
 		final mxGraphTransferable tb = new mxGraphTransferable(new Object[] { beginCell }, boundsb);
 		
-		graph.getModel().setValue(beginCell,(Object) new StateInfo(false, true, ""));
+		graph.getModel().setValue(beginCell, new StateInfo(false, true, ""));
 		
 		DragGestureListener addStateDraggerListener = e -> e.startDrag(null, mxSwingConstants.EMPTY_IMAGE, new Point(), t, null);
 		

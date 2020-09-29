@@ -76,7 +76,7 @@ public class PopUpMenu extends JPopupMenu {
 	 * Enumeration of targetType
 	 */
 	public enum TargetType {
-		GraphComponent, State, Transition;
+		GraphComponent, State, Transition
 	}
 	
 	

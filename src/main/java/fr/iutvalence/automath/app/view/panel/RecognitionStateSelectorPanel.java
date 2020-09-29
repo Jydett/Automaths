@@ -67,13 +67,13 @@ public class RecognitionStateSelectorPanel extends StateSelectorPanel {
 		mxRectangle boundsf = (mxGeometry) finalCell.getGeometry().clone();
 		final mxGraphTransferable tf = new mxGraphTransferable(new Object[] { finalCell }, boundsf);
 		
-		graph.getModel().setValue(finalCell,(Object) new StateInfo(true, false, ""));
+		graph.getModel().setValue(finalCell, new StateInfo(true, false, ""));
 		
 		mxCell finalBeginCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleFinalBeginState);
 		mxRectangle boundsfb = (mxGeometry) finalBeginCell.getGeometry().clone();
 		final mxGraphTransferable tfb = new mxGraphTransferable(new Object[] { finalBeginCell }, boundsfb);
 		
-		graph.getModel().setValue(finalBeginCell,(Object) new StateInfo(true, true, ""));
+		graph.getModel().setValue(finalBeginCell, new StateInfo(true, true, ""));
 		
 		DragGestureListener addFinalStateDraggerListener = e -> e.startDrag(null, mxSwingConstants.EMPTY_IMAGE, new Point(),tf, null);
 		

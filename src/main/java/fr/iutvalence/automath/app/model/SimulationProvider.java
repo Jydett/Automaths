@@ -279,7 +279,7 @@ public class SimulationProvider {
 	 * </ul>
 	 */
 	public enum SimulationState {
-		RUNNING, ACCEPTED, NOSTATEFOUND, END;
+		RUNNING, ACCEPTED, NOSTATEFOUND, END
 	}
 	
 }

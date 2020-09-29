@@ -23,11 +23,11 @@ public class ClassicMenuBar extends MenuBar {
 	}
 	
 	protected void addItemsToFile(JMenu menu) {
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Open"), new OpenActionWithPreviewer(), "/img/icon/open.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("OpenTemplate"), new OpenTemplate(), "/img/icon/open.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Open"), new OpenActionWithPreviewer(), "/img/icon/open.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("OpenTemplate"), new OpenTemplate(), "/img/icon/open.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)));
 		menu.addSeparator();
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Save"), new SaveAction(false), "/img/icon/save.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK)));
-		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SaveAs"), new SaveAction(true), "/img/icon/saveas.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Save"), new SaveAction(false), "/img/icon/save.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK)));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SaveAs"), new SaveAction(true), "/img/icon/saveas.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)));
 	}
 	
 }

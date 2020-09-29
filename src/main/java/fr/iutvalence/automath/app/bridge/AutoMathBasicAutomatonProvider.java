@@ -42,9 +42,8 @@ public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
 	@Override
 	public String getRegex(Set<mxCell> state, Set<mxCell> transitions) {
 		Automaton automate = getAutomate(state, transitions);
-		String s = Autorex.getRegexFromAutomaton(automate).replace("(.{0})","").replace(".{0}","");
 
-		return s;
+		return Autorex.getRegexFromAutomaton(automate).replace("(.{0})","").replace(".{0}","");
 	}
 
 	public Automaton generateAutomateWithExpReg(String text){

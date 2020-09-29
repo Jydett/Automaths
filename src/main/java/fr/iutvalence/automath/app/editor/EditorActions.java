@@ -68,7 +68,7 @@ public class EditorActions {
 	 * @param e An action
 	 * @return
 	 */
-	public static final GUIPanel getEditor(ActionEvent e)
+	public static GUIPanel getEditor(ActionEvent e)
 	{
 		if (e.getSource() instanceof Component)
 		{
@@ -693,12 +693,10 @@ public class EditorActions {
 
 			if (editor != null) {
 				mxGraphComponent graphComponent = editor.getGraphComponent();
-				FileFilter selectedFilter = null;
+				FileFilter selectedFilter;
 				DefaultFileFilter xmlPngFilter = (new DefaultFileFilter(".pdf",
 						"PDF " + mxResources.get("File") + " (.pdf)"));
-				String filename = null;
-				@SuppressWarnings("unused")
-				boolean dialogShown = false;
+				String filename;
 
 				if (showDialog || editor.getCurrentFile() == null) {
 					String wd;
@@ -713,8 +711,7 @@ public class EditorActions {
 					JFileChooser fc = new JFileChooser(wd);
 					fc.setDialogTitle(mxResources.get("SaveAs"));
 					// Adds the default file format
-					FileFilter defaultFilter = xmlPngFilter;
-					fc.addChoosableFileFilter(defaultFilter);
+					fc.addChoosableFileFilter(xmlPngFilter);
 					
 					fc.addChoosableFileFilter(new DefaultFileFilter(".pdf",
 							"PDF " + mxResources.get("File")
@@ -724,29 +721,28 @@ public class EditorActions {
 					Object[] imageFormats = ImageIO.getReaderFormatNames();
 
 					// Finds all distinct extensions
-					HashSet<String> formats = new HashSet<String>();
+					HashSet<String> formats = new HashSet<>();
 
-					for (int i = 0; i < imageFormats.length; i++) {
-						String ext = imageFormats[i].toString().toLowerCase();
+					for (Object format : imageFormats) {
+						String ext = format.toString().toLowerCase();
 						formats.add(ext);
 					}
 
 					imageFormats = formats.toArray();
 
-					for (int i = 0; i < imageFormats.length; i++) {
-						String ext = imageFormats[i].toString();
+					for (Object imageFormat : imageFormats) {
+						String ext = imageFormat.toString();
 						fc.addChoosableFileFilter(new DefaultFileFilter("."
-								+ ext, ext.toUpperCase() + " "
-								+ mxResources.get("File") + " (." + ext + ")"));
+							+ ext, ext.toUpperCase() + " "
+							+ mxResources.get("File") + " (." + ext + ")"));
 					}
 
 					// Adds filter that accepts all supported image formats
 					fc.addChoosableFileFilter(new DefaultFileFilter.ImageFileFilter(
 							mxResources.get("allImages")));
-					fc.setFileFilter(defaultFilter);
+					fc.setFileFilter(xmlPngFilter);
 					
 					int rc = fc.showSaveDialog(editor);
-					dialogShown = true;
 
 					if (rc != JFileChooser.APPROVE_OPTION) {
 						return;
@@ -839,29 +835,18 @@ public class EditorActions {
 			param.setCompressedText(new String[] { "mxGraphModel", xml });
 
 			// Saves as a PNG file
-			FileOutputStream outputStream = new FileOutputStream(new File(
-					filename));
-			try
-			{
-				mxPngImageEncoder encoder = new mxPngImageEncoder(outputStream,
-						param);
+			try (FileOutputStream outputStream = new FileOutputStream(new File(filename))) {
+				mxPngImageEncoder encoder = new mxPngImageEncoder(outputStream, param);
 
-				if (image != null)
-				{
+				if (image != null) {
 					encoder.encode(image);
 
 					editor.setModified(false);
 					editor.setCurrentFile(new File(filename));
-				}
-				else
-				{
+				} else {
 					JOptionPane.showMessageDialog(graphComponent,
-							mxResources.get("noImageData"));
+						mxResources.get("noImageData"));
 				}
-			}
-			finally
-			{
-				outputStream.close();
 			}
 		}
 
@@ -880,7 +865,7 @@ public class EditorActions {
 						"XML " + mxResources.get("File") + " (.xml)"));
 				FileFilter vmlFileFilter = new DefaultFileFilter(".html",
 						"VML " + mxResources.get("File") + " (.html)");
-				String filename = null;
+				String filename;
 				boolean dialogShown = false;
 
 				if (showDialog || editor.getCurrentFile() == null) {
@@ -897,8 +882,7 @@ public class EditorActions {
 					JFileChooser fc = new JFileChooser(wd);
 					fc.setDialogTitle(mxResources.get("SaveAs"));
 					// Adds the default file format
-					FileFilter defaultFilter = xmlPngFilter;
-					fc.addChoosableFileFilter(defaultFilter);
+					fc.addChoosableFileFilter(xmlPngFilter);
 					
 					fc.addChoosableFileFilter(new DefaultFileFilter(".py",
 							"Python " + mxResources.get("File")
@@ -926,26 +910,26 @@ public class EditorActions {
 					Object[] imageFormats = ImageIO.getReaderFormatNames();
 
 					// Finds all distinct extensions
-					HashSet<String> formats = new HashSet<String>();
+					HashSet<String> formats = new HashSet<>();
 
-					for (int i = 0; i < imageFormats.length; i++) {
-						String ext = imageFormats[i].toString().toLowerCase();
+					for (Object format : imageFormats) {
+						String ext = format.toString().toLowerCase();
 						formats.add(ext);
 					}
 
 					imageFormats = formats.toArray();
 
-					for (int i = 0; i < imageFormats.length; i++) {
-						String ext = imageFormats[i].toString();
+					for (Object imageFormat : imageFormats) {
+						String ext = imageFormat.toString();
 						fc.addChoosableFileFilter(new DefaultFileFilter("."
-								+ ext, ext.toUpperCase() + " "
-								+ mxResources.get("File") + " (." + ext + ")"));
+							+ ext, ext.toUpperCase() + " "
+							+ mxResources.get("File") + " (." + ext + ")"));
 					}
 
 					// Adds filter that accepts all supported image formats
 					fc.addChoosableFileFilter(new DefaultFileFilter.ImageFileFilter(
 							mxResources.get("allImages")));
-					fc.setFileFilter(defaultFilter);
+					fc.setFileFilter(xmlPngFilter);
 					
 					int rc = fc.showSaveDialog(editor);
 					dialogShown = true;
@@ -1170,7 +1154,7 @@ public class EditorActions {
 				 String url = "file://"+(EditorActions.class.getResource("/html/aide/HTML_Files/indexrepsonsive.html")).getPath();
 				 System.out.println(url);
 				 url = "file://"+System.getProperty("user.dir")+"/bin/html/aide/HTML_Files/indexrepsonsive.html";
-				 url.replace((char) 0x5C, '/');
+//				 url.replace((char) 0x5C, '/');
 				 
 				 StringBuilder finalUrl = new StringBuilder();
 				 for (Character c : url.toCharArray()) {

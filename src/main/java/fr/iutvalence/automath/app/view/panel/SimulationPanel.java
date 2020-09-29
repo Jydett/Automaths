@@ -221,7 +221,7 @@ public class SimulationPanel extends JPanel {
 	/**
 	 * Redefinition of the class JTextArea with a cursor on the position of advancement in the word simulate
 	 */
-	class JTextFieldCustom extends JTextArea{
+    static class JTextFieldCustom extends JTextArea{
 		/**
 		 *
 		 */

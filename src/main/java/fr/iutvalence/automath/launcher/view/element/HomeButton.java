@@ -2,11 +2,9 @@ package fr.iutvalence.automath.launcher.view.element;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.Color;
-import java.awt.Graphics;
 import javax.swing.JButton;
 import java.awt.event.*;
-import java.awt.Font;
+
 /**
  * Create round button for Home page 
  */
@@ -77,8 +75,7 @@ public class HomeButton extends JButton{
 	 * @return diameter
 	 */
 	private int getDiameter(){
-		int diameter = Math.min(getWidth(), getHeight());
-		return diameter;
+		return Math.min(getWidth(), getHeight());
 	}
 	/**
 	 * Create a Dimension 
@@ -112,18 +109,15 @@ public class HomeButton extends JButton{
 		int radius = diameter/2;
 		g.setColor(hisColor);
 
-		if(mousePressed){
-			//nothing
-		}
-		else {
+		if (! mousePressed) {
 			g.setColor(hisColor);
 		}
+
 		g.fillOval(getWidth()/2 - radius, getHeight()/2 - radius, diameter, diameter);
 		
-		if(mouseOver){
+		if (mouseOver) {
 			g.setColor(Color.BLACK);
-		}
-		else {
+		} else {
 			g.setColor(hisColor);
 		}
 		//Draw the button

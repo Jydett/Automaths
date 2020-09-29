@@ -187,9 +187,7 @@ public class CellEditor implements mxICellEditor {
 	 * Returns the bounds to be used for the editor.
 	 */
 	public Rectangle getEditorBounds(mxCellState state, double scale) {
-		mxIGraphModel model = state.getView().getGraph().getModel();
-		Rectangle bounds = null;
-
+		Rectangle bounds;
 		if (useLabelBounds(state)) {
 			bounds = state.getLabelBounds().getRectangle();
 			//bounds.height += 10;

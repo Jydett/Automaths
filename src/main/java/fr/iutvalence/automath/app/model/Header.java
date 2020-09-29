@@ -28,8 +28,8 @@ public class Header {
 		/**
 		 * State of the application used outside the exam with all the features
 		 */
-		CLASSIC;
-	}
+		CLASSIC
+    }
 	
 	/**
 	 * The name of the user

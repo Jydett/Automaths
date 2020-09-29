@@ -107,9 +107,9 @@ public class ExportPython {
 				}
 				list_of_transition.append("(")
 					.append(stateMap.get(source))
-					.append(",\'")
+					.append(",'")
 					.append(aTransitionValue)
-					.append("\'):{")
+					.append("'):{")
 					.append(stateMap.get(target))
 					.append("}");
 				lang.add(aTransitionValue);
@@ -122,7 +122,7 @@ public class ExportPython {
 			if (language.length() != 1) {
 				language.append(",");
 			}
-			language.append("\'").append(state).append("\'");
+			language.append("'").append(state).append("'");
 		}
 		language.append("}");
 		

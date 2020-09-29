@@ -127,19 +127,15 @@ public class DefaultFileFilter extends FileFilter
 		 *            The file to be checked.
 		 * @return Returns true if the file is ACCEPTED.
 		 */
-		public boolean accept(File file)
-		{
-			if (file.isDirectory())
-			{
+		public boolean accept(File file) {
+			if (file.isDirectory()) {
 				return true;
 			}
 
 			String filename = file.toString().toLowerCase();
 
-			for (int j = 0; j < imageFormats.length; j++)
-			{
-				if (filename.endsWith("." + imageFormats[j].toLowerCase()))
-				{
+			for (String imageFormat : imageFormats) {
+				if (filename.endsWith("." + imageFormat.toLowerCase())) {
 					return true;
 				}
 			}

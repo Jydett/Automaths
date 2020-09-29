@@ -128,7 +128,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		super.setMultigraph(true);
 
 		mxStylesheet edgeStyle = new mxStylesheet();
-		Map<String, Object> edge = new HashMap<String, Object>();
+		Map<String, Object> edge = new HashMap<>();
 		edge.put(mxConstants.STYLE_ROUNDED, true);
 		edge.put(mxConstants.STYLE_ORTHOGONAL, false);
 		edge.put(mxConstants.STYLE_EDGE, "EntityRelation");
