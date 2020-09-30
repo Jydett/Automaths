@@ -1,9 +1,13 @@
 package fr.iutvalence.automath.app.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Contains the information of a <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.model.mxCell}</a>'s edge form.
  */
-@SuppressWarnings("serial")
+@NoArgsConstructor
+@Data
 public class TransitionInfo implements CellInfo {
 	
 	/**
@@ -18,10 +22,10 @@ public class TransitionInfo implements CellInfo {
 	/**
 	 * the label of the transition
 	 */
-	public String name;
+	public String label;
 	
-	public TransitionInfo(String name, StateInfo stateInfo) {
-		this.name = name;
+	public TransitionInfo(String label, StateInfo stateInfo) {
+		this.label = label;
 		this.source = stateInfo;
 		this.destination = null;
 	}
@@ -32,25 +36,7 @@ public class TransitionInfo implements CellInfo {
 		String src = source.getLabel().length()==0?CellInfo.NO_NAME:source.getLabel();
 		String dest = destination.getLabel().length()==0?CellInfo.NO_NAME:destination.getLabel();
 
-		return "Transition "+(name.length()==0?CellInfo.NO_NAME:name)+"\n ["+src+"->"+dest+"]";
-	}
-	
-	@Override
-	public String getLabel() {
-		return name;
-	}
-	
-	@Override
-	public void setLabel(String s) {
-		this.name = s;
-	}
-
-	public void setDestination(StateInfo stateInfoDestination) {
-		this.destination = stateInfoDestination;
-	}
-
-	public void setSource(StateInfo stateInfo) {
-		this.source = stateInfo;
+		return "Transition "+(label.length()==0?CellInfo.NO_NAME:label)+"\n ["+src+"->"+dest+"]";
 	}
 
 	@Override
@@ -72,6 +58,6 @@ public class TransitionInfo implements CellInfo {
 			}
 	    }
 	    return s;
-}
+	}
 
 }

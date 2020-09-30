@@ -1,9 +1,10 @@
 package fr.iutvalence.automath.app.io.in;
 
-import java.awt.event.ActionEvent;
-import javax.swing.text.JTextComponent;
 import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
 import fr.iutvalence.automath.app.editor.EditorActions;
+
+import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
 
 /**
  * Handle the conversion of a regex to a graphical automaton
@@ -33,10 +34,10 @@ public class ImporterRegularExpression implements Importer {
 	/**
 	 * Convert the string of characters to a graphical automaton
 	 */
-	public void importAutomaton(){
+	public void importAutomaton(boolean clearBefore) {
 		this.graph.getModel().beginUpdate();
 		try {
-			this.graph.deleteAllElements();
+			if (clearBefore) this.graph.deleteAllElements();
 			this.graph.importerExpReg(internalText.getText());
 			new EditorActions.OrganicAction().actionPerformed(new ActionEvent(internalText, ActionEvent.ACTION_PERFORMED, "Organize"));
 		} finally {

@@ -1,20 +1,17 @@
 package fr.iutvalence.automath.app.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
-
-import fr.iutvalence.automath.app.model.StateInfo;
-import fr.iutvalence.automath.app.model.TransitionInfo;
-import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.exceptions.GraphIsEmptyException;
 import fr.iutvalence.automath.app.exceptions.NextCallOnNonStartedSimulationException;
 import fr.iutvalence.automath.app.exceptions.NoInitialStateException;
 import fr.iutvalence.automath.app.exceptions.WordIsEmptyException;
+import fr.iutvalence.automath.app.view.panel.GUIPanel;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * SimulationProvider is the class that contains the algorithm to simulate the automaton
@@ -131,7 +128,7 @@ public class SimulationProvider {
 		for (Object cellO : cells) {
 			mxCell cell = (mxCell) cellO;
 			if(cell.isVertex()) {
-				if(((StateInfo) graph.getModel().getValue(cell)).isStarting) {
+				if(((StateInfo) graph.getModel().getValue(cell)).isStarting()) {
 					lastStates.add(cell);
 					hasInitial = true;
 				}
@@ -170,7 +167,8 @@ public class SimulationProvider {
 	                    if (e.getSource().equals(cell)) {
 		                    if (e.isEdge()) {
 		                        TransitionInfo ti = (TransitionInfo) e.getValue();
-		                        if (ti.name.indexOf(c) != -1 || ti.name.equals("*")) {
+								final String label = ti.getLabel();
+								if (label.indexOf(c) != -1 || label.equals("*")) {
 		                            futurStates.add(e);
 		                            exist = true;
 		                        }
@@ -199,7 +197,7 @@ public class SimulationProvider {
 	    	for (mxCell finale : futurStates) {
 	    		lastStates.clear();
 	    		StateInfo si = (StateInfo) finale.getValue();
-	    		if (si.isAccepting) {
+	    		if (si.isAccepting()) {
 	    			res = SimulationState.ACCEPTED;
 	    			green.add(finale);
 	    			hasEnd = true;

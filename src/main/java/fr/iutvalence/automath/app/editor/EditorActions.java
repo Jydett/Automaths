@@ -1,5 +1,47 @@
 package fr.iutvalence.automath.app.editor;
 
+import com.mxgraph.canvas.mxICanvas;
+import com.mxgraph.canvas.mxSvgCanvas;
+import com.mxgraph.io.mxCodec;
+import com.mxgraph.io.mxGdCodec;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.model.mxICell;
+import com.mxgraph.model.mxIGraphModel;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.util.mxGraphActions;
+import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxCellRenderer.CanvasFactory;
+import com.mxgraph.util.mxDomUtils;
+import com.mxgraph.util.mxResources;
+import com.mxgraph.util.mxUtils;
+import com.mxgraph.util.mxXmlUtils;
+import com.mxgraph.util.png.mxPngEncodeParam;
+import com.mxgraph.util.png.mxPngImageEncoder;
+import com.mxgraph.util.png.mxPngTextDecoder;
+import com.mxgraph.view.mxGraph;
+import fr.iutvalence.automath.app.io.in.ImporterXML;
+import fr.iutvalence.automath.app.io.out.ExportPDF;
+import fr.iutvalence.automath.app.io.out.ExportPython;
+import fr.iutvalence.automath.app.io.out.ExportXML;
+import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
+import fr.iutvalence.automath.app.model.StateInfo;
+import fr.iutvalence.automath.app.view.menu.PopUpMenu;
+import fr.iutvalence.automath.app.view.panel.GUIPanel;
+import fr.iutvalence.automath.app.view.utils.DefaultFileFilter;
+import fr.iutvalence.automath.launcher.view.utils.FilePreviewerWithWorker;
+import org.w3c.dom.Document;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
@@ -14,50 +56,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.ParserConfigurationException;
-
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.swing.util.mxGraphActions;
-import lombok.RequiredArgsConstructor;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.canvas.mxSvgCanvas;
-import com.mxgraph.io.mxCodec;
-import com.mxgraph.io.mxGdCodec;
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGraphModel;
-import com.mxgraph.model.mxIGraphModel;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxDomUtils;
-import com.mxgraph.util.mxResources;
-import com.mxgraph.util.mxUtils;
-import com.mxgraph.util.mxXmlUtils;
-import com.mxgraph.util.mxCellRenderer.CanvasFactory;
-import com.mxgraph.util.png.mxPngEncodeParam;
-import com.mxgraph.util.png.mxPngImageEncoder;
-import com.mxgraph.util.png.mxPngTextDecoder;
-import com.mxgraph.view.mxGraph;
-
-import fr.iutvalence.automath.app.view.panel.GUIPanel;
-import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
-import fr.iutvalence.automath.app.view.utils.DefaultFileFilter;
-import fr.iutvalence.automath.app.model.StateInfo;
-import fr.iutvalence.automath.app.io.out.ExportPDF;
-import fr.iutvalence.automath.app.io.out.ExportPython;
-import fr.iutvalence.automath.app.io.out.ExportXML;
-import fr.iutvalence.automath.app.io.in.ImporterXML;
-import fr.iutvalence.automath.launcher.view.utils.FilePreviewerWithWorker;
-import fr.iutvalence.automath.app.view.menu.PopUpMenu;
 /**
  * 
  *
@@ -99,9 +100,7 @@ public class EditorActions {
 			super(name);
 			
 			addActionListener(new ActionListener(){
-				/**
-				 * 
-				 */
+		
 				public void actionPerformed(ActionEvent e){
 					GUIPanel editor = getEditor(e);
 					if(e.getSource() instanceof Component) {
@@ -110,13 +109,14 @@ public class EditorActions {
 					}
 					FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
 					Object state = graph.getSelectionCell();
-					if(state != null) {
-						if(((mxCell)state).isVertex()) {
+					if (state != null) {
+						if (((mxCell)state).isVertex()) {
 							StateInfo stInfo = ((StateInfo)((mxCell)state).getValue());
 							mxIGraphModel model = graph.getModel();
 
 							model.beginUpdate();
-							model.setValue(state,stInfo.setStarting(!stInfo.isStarting));
+							stInfo.setStarting(! stInfo.isStarting());
+							model.setValue(state, stInfo);
 							stInfo.refresh((mxCell) state);
 							model.endUpdate();
 							editor.getCellDescriptorPanel().refresh();
@@ -138,9 +138,7 @@ public class EditorActions {
 		public SetFinalAction(String name) {
 			super(name);
 			addActionListener(new ActionListener(){
-				/**
-				 * 
-				 */
+		
 				public void actionPerformed(ActionEvent e){
 					GUIPanel editor = getEditor(e);
 					FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
@@ -151,7 +149,8 @@ public class EditorActions {
 							mxIGraphModel model = graph.getModel();
 
 							model.beginUpdate();
-							model.setValue(state,stInfo.setAccepting(!stInfo.isAccepting));
+							stInfo.setAccepting(! stInfo.isAccepting());
+							model.setValue(state, stInfo);
 							stInfo.refresh((mxCell) state);
 							model.endUpdate();
 							editor.getCellDescriptorPanel().refresh();
@@ -180,6 +179,29 @@ public class EditorActions {
 			graph.getModel().endUpdate();
 		}
 	}
+
+	public static class ReverseAction extends AbstractAction {
+
+		public ReverseAction(String name) {
+			super(name);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			mxGraph graph = getEditor(e).getGraphComponent().getGraph();
+			mxIGraphModel model = graph.getModel();
+			model.beginUpdate();
+			Arrays.stream(graph.getSelectionCells())
+				.map(c -> (mxCell) c)
+				.filter(mxCell::isEdge)
+				.forEach(transition -> {
+					mxICell oldSource = transition.getSource();
+					model.setTerminal(transition, transition.getTarget(), true);
+					model.setTerminal(transition, oldSource, false);
+				});
+			model.endUpdate();
+		}
+	}
 	
 	@SuppressWarnings("serial")
 	/**
@@ -187,9 +209,7 @@ public class EditorActions {
 	 */
 	public static class ExitAction extends AbstractAction
 	{
-		/**
-		 * 
-		 */
+
 		public void actionPerformed(ActionEvent e)
 		{
 			GUIPanel editor = getEditor(e);
@@ -221,21 +241,15 @@ public class EditorActions {
 	 */
 	public static class HistoryAction extends AbstractAction
 	{
-		/**
-		 * 
-		 */
+
 		protected final boolean undo;
 
-		/**
-		 * 
-		 */
+
 		public HistoryAction(boolean undo) {
 			this.undo = undo;
 		}
 
-		/**
-		 * 
-		 */
+
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
 			if (editor != null) {
@@ -311,15 +325,11 @@ public class EditorActions {
 	public static class OpenTemplate extends AbstractAction
 	{
 		
-		/**
-		 * 
-		 */
+
 		protected String lastDir;
 		private ImporterXML importerXML;
 
-		/**
-		 * 
-		 */
+
 		protected void resetEditor(GUIPanel editor)
 		{
 			editor.setModified(true);
@@ -360,15 +370,15 @@ public class EditorActions {
 		protected void openGD(GUIPanel editor, File file, String gdText) {
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			
-			if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
+			if (file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
 				try {
-					importerXML.importAutomaton(file.getAbsolutePath(),false);
+					importerXML.setFile(file.getAbsolutePath());
+					importerXML.importAutomaton(false);
 					editor.getGraphComponent().zoomAndCenter();
-				} catch (SAXException | IOException e) {
+				} catch (Exception e) {
 					editor.displayMessage(mxResources.get("XMLERROR"), mxResources.get("Error"), JOptionPane.ERROR_MESSAGE);
 				}
-			}
-			else {
+			} else {
 				// Replaces file extension with .mxe
 				String filename = file.getName();
 				filename = filename.substring(0, filename.length() - 4) + ".mxe";	
@@ -496,20 +506,12 @@ public class EditorActions {
 	/**
 	 * The action to import files with a preview
 	 */
-	public static class OpenActionWithPreviewer extends AbstractAction
-	{
-		
-		/**
-		 * 
-		 */
+	public static class OpenActionWithPreviewer extends AbstractAction {
+
 		protected String lastDir;
 		private ImporterXML importerXML;
 
-		/**
-		 * 
-		 */
-		protected void resetEditor(GUIPanel editor)
-		{
+		protected void resetEditor(GUIPanel editor) {
 			editor.setModified(false);
 			editor.getUndoManager().clear();
 			editor.getGraphComponent().zoomAndCenter();
@@ -518,50 +520,44 @@ public class EditorActions {
 		/**
 		 * Reads XML+PNG format.
 		 */
-		protected void openXmlPng(GUIPanel editor, File file)
-				throws IOException
-		{
-			Map<String, String> text = mxPngTextDecoder
-					.decodeCompressedText(new FileInputStream(file));
+		protected void openXmlPng(GUIPanel editor, File file) throws IOException {
+			try (final FileInputStream data = new FileInputStream(file)){
+				Map<String, String> text = mxPngTextDecoder
+					.decodeCompressedText(data);
 
-			if (text != null)
-			{
-				String value = text.get("mxGraphModel");
+				if (text != null) {
+					String value = text.get("mxGraphModel");
 
-				if (value != null)
-				{
-					Document document = mxXmlUtils.parseXml(URLDecoder.decode(
-							value, "UTF-8"));
-					mxCodec codec = new mxCodec(document);
-					codec.decode(document.getDocumentElement(), editor
+					if (value != null) {
+						Document document = mxXmlUtils.parseXml(URLDecoder.decode(value, "UTF-8"));
+						mxCodec codec = new mxCodec(document);
+						codec.decode(document.getDocumentElement(), editor
 							.getGraphComponent().getGraph().getModel());
-					editor.setCurrentFile(file);
-					resetEditor(editor);
+						editor.setCurrentFile(file);
+						resetEditor(editor);
 
-					return;
+						return;
+					}
 				}
 			}
 
-			JOptionPane.showMessageDialog(editor,
-					mxResources.get("imageContainsNoDiagramData"));
+			JOptionPane.showMessageDialog(editor, mxResources.get("imageContainsNoDiagramData"));
 		}
 
-		protected void openGD(GUIPanel editor, File file,
-				String gdText)
-		{
+		protected void openGD(GUIPanel editor, File file, String gdText) {
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			
-			if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
+			if (file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
 				try {
 					String filename = file.getName();
-					importerXML.importAutomaton(file.getAbsolutePath(),true);
+					importerXML.setFile(file.getAbsolutePath());
+					importerXML.importAutomaton(true);
 					editor.getGraphComponent().zoomAndCenter();
 					editor.setCurrentFile(new File(lastDir + "/" + filename));
-				} catch (SAXException | IOException e) {
+				} catch (Exception e) {
 					editor.displayMessage(mxResources.get("XMLERROR"), mxResources.get("Error"), JOptionPane.ERROR_MESSAGE);
 				}
-			}
-			else {
+			} else {
 				// Replaces file extension with .mxe
 				String filename = file.getName();
 				filename = filename.substring(0, filename.length() - 4) + ".mxe";
@@ -689,14 +685,10 @@ public class EditorActions {
 	 */
 	public static class SaveExamAction extends AbstractAction {
 		
-		/**
-		 * 
-		 */
+
 		protected String lastDir = null;
 		
-		/**
-		 * 
-		 */
+
 		protected boolean showDialog;
 		
 		
@@ -809,33 +801,21 @@ public class EditorActions {
 	/**
 	 * The action to save in all available models
 	 */
-	public static class SaveAction extends AbstractAction
-	{
-		/**
-		 * 
-		 */
+	public static class SaveAction extends AbstractAction {
 		protected boolean showDialog;
 
-		/**
-		 * 
-		 */
 		protected String lastDir = null;
 
 		private ExportXML importerXML;
 
-		/**
-		 * 
-		 */
-		public SaveAction(boolean showDialog)
-		{
+		public SaveAction(boolean showDialog) {
 			this.showDialog = showDialog;
 		}
 
 		/**
 		 * Saves XML+PNG format.
 		 */
-		protected void saveXmlPng(GUIPanel editor, String filename,
-				Color bg) throws IOException {
+		protected void saveXmlPng(GUIPanel editor, String filename, Color bg) throws IOException {
 			mxGraphComponent graphComponent = editor.getGraphComponent();
 			mxGraph graph = graphComponent.getGraph();
 
@@ -868,9 +848,7 @@ public class EditorActions {
 			}
 		}
 
-		/**
-		 * 
-		 */
+
 		public void actionPerformed(ActionEvent e)
 		{
 			GUIPanel editor = getEditor(e);
@@ -884,7 +862,6 @@ public class EditorActions {
 				FileFilter vmlFileFilter = new DefaultFileFilter(".html",
 						"VML " + mxResources.get("File") + " (.html)");
 				String filename;
-				boolean dialogShown = false;
 
 				if (showDialog || editor.getCurrentFile() == null) {
 					String wd;
@@ -950,7 +927,6 @@ public class EditorActions {
 					fc.setFileFilter(xmlPngFilter);
 					
 					int rc = fc.showSaveDialog(editor);
-					dialogShown = true;
 
 					if (rc != JFileChooser.APPROVE_OPTION) {
 						return;
@@ -1038,31 +1014,15 @@ public class EditorActions {
 					} else {
 						Color bg = null;
 
-						if ((!ext.equalsIgnoreCase("gif") && !ext
-								.equalsIgnoreCase("png"))
+						if ((!ext.equalsIgnoreCase("gif") && !ext.equalsIgnoreCase("png"))
 								|| JOptionPane.showConfirmDialog(
 										graphComponent, mxResources
 												.get("transparentBackground")) != JOptionPane.YES_OPTION) {
 							bg = graphComponent.getBackground();
 						}
 
-						if (selectedFilter == xmlPngFilter
-								|| (editor.getCurrentFile() != null
-										&& ext.equalsIgnoreCase("png") && !dialogShown)) {
+						if (selectedFilter == xmlPngFilter || ext.equalsIgnoreCase("png")) {
 							saveXmlPng(editor, filename, bg);
-						}
-						else {
-							BufferedImage image = mxCellRenderer
-									.createBufferedImage(graph, null, 1, bg,
-											graphComponent.isAntiAlias(), null,
-											graphComponent.getCanvas());
-
-							if (image != null) {
-								ImageIO.write(image, ext, new File(filename));
-							} else {
-								JOptionPane.showMessageDialog(graphComponent,
-										mxResources.get("noImageData"));
-							}
 						}
 					}
 					editor.setModified(false);
@@ -1084,9 +1044,7 @@ public class EditorActions {
 	 * The action to open a new automaton by overwriting the previous one
 	 */
 	public static class NewAction extends AbstractAction {
-		/**
-		 * 
-		 */
+
 		protected void resetEditor(GUIPanel editor) {
 			editor.setModified(false);
 			editor.setCurrentFile(null);
@@ -1164,9 +1122,7 @@ public class EditorActions {
 	 * The action to open help in a browser
 	 */
 	public static class OpenHelpAction extends AbstractAction {
-		/**
-		 * 
-		 */
+
 		public void actionPerformed(ActionEvent e) {
 			if (Desktop.isDesktopSupported()) {
 				 String url = "file://"+(EditorActions.class.getResource("/html/aide/HTML_Files/indexrepsonsive.html")).getPath();

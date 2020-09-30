@@ -1,16 +1,18 @@
 package fr.iutvalence.automath.app.view.menu;
 
-import javax.swing.JPopupMenu;
-import javax.swing.TransferHandler;
-
-import com.mxgraph.util.mxResources;
 import com.mxgraph.model.mxCell;
-
+import com.mxgraph.util.mxResources;
+import fr.iutvalence.automath.app.editor.EditorActions;
+import fr.iutvalence.automath.app.editor.EditorActions.DeleteAction;
+import fr.iutvalence.automath.app.editor.EditorActions.ReorderAction;
+import fr.iutvalence.automath.app.editor.EditorActions.SetFinalAction;
+import fr.iutvalence.automath.app.editor.EditorActions.SetInitialAction;
+import fr.iutvalence.automath.app.model.StateInfo;
 import fr.iutvalence.automath.app.view.panel.CellDescriptorPane;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
-import fr.iutvalence.automath.app.model.StateInfo;
-import fr.iutvalence.automath.app.editor.EditorActions;
-import fr.iutvalence.automath.app.editor.EditorActions.*;
+
+import javax.swing.JPopupMenu;
+import javax.swing.TransferHandler;
 /**
  * It serves to have a menu when the user do a right click on the automate
  */
@@ -47,26 +49,46 @@ public class PopUpMenu extends JPopupMenu {
 	 * @param cell
 	 * @param type
 	 */
-	public void update(mxCell cell, TargetType type) {
+	private void update(mxCell cell, TargetType type) {
 		switch(type) {
 			case State :
 				StateInfo stInfo =(StateInfo)cell.getValue();
-		    	add(new SetInitialAction(mxResources.get("SetInitial"))).setSelected(stInfo.isStarting);
-		    	add(new SetFinalAction(mxResources.get("SetFinal"))).setSelected(stInfo.isAccepting);
-	    		add(new ReorderAction(mxResources.get("ToFront"), false));
-	    		add(new ReorderAction(mxResources.get("ToBack"), true));
-		    	addSeparator();
+		    	add(new SetInitialAction(mxResources.get("SetInitial"))).setSelected(stInfo.isStarting());
+		    	add(new SetFinalAction(mxResources.get("SetFinal"))).setSelected(stInfo.isAccepting());
+				addSeparator();
+				addReorderAction();
+				addSeparator();
+				addCopyCutPasteActions();
+				addDeleteAction();
+				break;
 			case Transition :
-		        add(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(),"/img/icon/copy.gif"));
-		        add(editor.bind(mxResources.get("Cut"), TransferHandler.getCutAction(),"/img/icon/cut.gif"));
-		        add(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(),"/img/icon/paste.gif"));
-		    	addSeparator();
-				add(editor.bind(mxResources.get("Delete"),new EditorActions.DeleteAction(),"/img/icon/delete.gif"));
-		    	break;
+				add(new EditorActions.ReverseAction(mxResources.get("Reverse")));
+				addSeparator();
+				addReorderAction();
+				addSeparator();
+				addCopyCutPasteActions();
+				addDeleteAction();
+				break;
 			case GraphComponent :
 		        add(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(),"/img/icon/paste.gif"));
 		}
 	}
+
+	private void addReorderAction() {
+		add(new ReorderAction(mxResources.get("ToFront"), false));
+		add(new ReorderAction(mxResources.get("ToBack"), true));
+	}
+
+	private void addDeleteAction() {
+		add(editor.bind(mxResources.get("Delete"), new DeleteAction(), "/img/icon/delete.gif"));
+	}
+
+	private void addCopyCutPasteActions() {
+		add(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(), "/img/icon/copy.gif"));
+		add(editor.bind(mxResources.get("Cut"), TransferHandler.getCutAction(), "/img/icon/cut.gif"));
+		add(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(), "/img/icon/paste.gif"));
+	}
+
 	/**
 	 * Enumeration of targetType
 	 */

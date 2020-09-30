@@ -1,13 +1,40 @@
 package fr.iutvalence.automath.app.view.panel;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.io.File;
-import java.util.List;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxEdgeLabelLayout;
+import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.layout.mxPartitionLayout;
+import com.mxgraph.layout.mxStackLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.swing.handler.mxCellHandler;
+import com.mxgraph.swing.handler.mxEdgeHandler;
+import com.mxgraph.swing.handler.mxElbowEdgeHandler;
+import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.view.mxICellEditor;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxPoint;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.util.mxResources;
+import com.mxgraph.view.mxCellState;
+import com.mxgraph.view.mxEdgeStyle;
+import com.mxgraph.view.mxGraph;
+import fr.iutvalence.automath.app.bridge.AutoMathBasicAutomatonProvider;
+import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
+import fr.iutvalence.automath.app.view.CellEditor;
+import fr.iutvalence.automath.app.view.frame.AboutFrame;
+import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
+import fr.iutvalence.automath.app.view.handler.UndoHandler;
+import fr.iutvalence.automath.app.view.menu.PopUpMenu;
+import fr.iutvalence.automath.app.view.menu.PopUpMenu.TargetType;
+import fr.iutvalence.automath.app.view.utils.RotationVertexHandler;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -22,26 +49,14 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.mxgraph.layout.*;
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
-import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.swing.view.mxICellEditor;
-import com.mxgraph.util.*;
-import com.mxgraph.view.mxGraph;
-
-import fr.iutvalence.automath.app.bridge.AutoMathBasicAutomatonProvider;
-import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
-import fr.iutvalence.automath.app.view.frame.AboutFrame;
-import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
-import fr.iutvalence.automath.app.view.handler.UndoHandler;
-import fr.iutvalence.automath.app.view.menu.PopUpMenu.TargetType;
-import fr.iutvalence.automath.app.view.CellEditor;
-import fr.iutvalence.automath.app.view.menu.PopUpMenu;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.io.File;
+import java.util.List;
 
 public abstract class GUIPanel extends JPanel {
 	
@@ -152,6 +167,18 @@ public abstract class GUIPanel extends JPanel {
 
 			protected mxICellEditor createCellEditor() {
 				return new CellEditor(this);
+			}
+
+			@Override
+			public mxCellHandler createHandler(mxCellState state) {
+				if (this.graph.getModel().isVertex(state.getCell())) {
+					return new RotationVertexHandler(this, state);
+				} else if (this.graph.getModel().isEdge(state.getCell())) {
+					mxEdgeStyle.mxEdgeStyleFunction style = this.graph.getView().getEdgeStyle(state, null, null, null);
+					return !this.graph.isLoop(state) && style != mxEdgeStyle.ElbowConnector && style != mxEdgeStyle.SideToSide && style != mxEdgeStyle.TopToBottom ? new mxEdgeHandler(this, state) : new mxElbowEdgeHandler(this, state);
+				} else {
+					return new mxCellHandler(this, state);
+				}
 			}
 		};
 		gc.setPageVisible(false);
@@ -278,10 +305,9 @@ public abstract class GUIPanel extends JPanel {
 
 		//Interaction menu on the chart with basic changes such as copy, paste etc.
 		PopUpMenu popUpMenu;
-		if(cell != null) {
-			if(((mxCell)cell).isVertex()) {
-				popUpMenu = new PopUpMenu(this, ((mxCell)cell), TargetType.State);
-				popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);}
+		if (cell != null) {
+			popUpMenu = new PopUpMenu(this, ((mxCell)cell), ((mxCell)cell).isVertex() ? TargetType.State : TargetType.Transition);
+			popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);
 		} else {
 			popUpMenu = new PopUpMenu(this, null, TargetType.GraphComponent);
 			popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);

@@ -1,12 +1,8 @@
 package fr.iutvalence.automath.app.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.io.mxCodecRegistry;
+import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -18,7 +14,6 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
-
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
@@ -26,6 +21,12 @@ import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
 import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
 import fr.iutvalence.automath.app.view.shape.BeginEndingStateShape;
 import fr.iutvalence.automath.app.view.shape.BeginStateShape;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A custom <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.view.mxGraph}</a> that represent a finite state automaton
@@ -345,6 +346,11 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
  			double x, double y, String style,boolean accepted,boolean initial) {
      	return this.insertVertex(parent, null,label, x, y, STATE_RADIUS, STATE_RADIUS,style,accepted,initial);
      }
+
+     static {
+		 mxCodecRegistry.addPackage("fr.iutvalence.automath.app.model");
+		 mxCodecRegistry.register(new mxObjectCodec(new StateInfo()));
+	 }
 }
 
 

@@ -1,28 +1,28 @@
 package fr.iutvalence.automath.app.io.out;
 
-import java.awt.Graphics2D;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxCellRenderer.CanvasFactory;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.util.mxResources;
 import com.mxpdf.text.Document;
 import com.mxpdf.text.DocumentException;
 import com.mxpdf.text.Rectangle;
 import com.mxpdf.text.pdf.PdfContentByte;
 import com.mxpdf.text.pdf.PdfWriter;
-
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.model.Header;
+
+import java.awt.Graphics2D;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * ExportPDF is the class that contains the action to convert the graphical graph into a PDF file
  */
-public class ExportPDF {
+public class ExportPDF implements Exporter {
 
 	private final static String infoStyle =
 			mxConstants.STYLE_FILLCOLOR + "=white;" +
@@ -33,7 +33,7 @@ public class ExportPDF {
 	/**
 	 * The graph of the application
 	 */
-	private FiniteStateAutomatonGraph graph;
+	private final FiniteStateAutomatonGraph graph;
 	
 	/**
 	 * A constructor of ExportPDF, with the parameter graph
@@ -52,15 +52,15 @@ public class ExportPDF {
 		graph.getModel().beginUpdate();
 		Header header = Header.getInstanceOfHeader();
 		StringBuilder sb = new StringBuilder();
-		sb.append("Nom:");//TODO traduction
+		sb.append("\t").append(mxResources.get("HeaderName")).append(":");
 		sb.append(header.getName());
-		sb.append("    Prénom:");
+		sb.append("\t").append(mxResources.get("HeaderForename")).append(":");
 		sb.append(header.getForename());
-		sb.append("    Groupe:");
+		sb.append("\t").append(mxResources.get("HeaderGroup")).append(":");
 		sb.append(header.getStudentClass());
-		sb.append("    Code-Etudiant:");
+		sb.append("\t").append(mxResources.get("HeaderStudentCode")).append(":");
 		sb.append(header.getStudentCode());
-		sb.append("    Mode:");
+		sb.append("\t").append(mxResources.get("HeaderMode")).append(":");
 		sb.append(header.getModCode());
 		try {
 			Object obj = graph.insertVertex(graph.getDefaultParent(), null, sb, 10, bounds.getWidth() + 75, 350, 75,

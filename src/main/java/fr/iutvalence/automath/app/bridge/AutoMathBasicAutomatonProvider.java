@@ -1,20 +1,19 @@
 package fr.iutvalence.automath.app.bridge;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
+import dk.brics.automaton.Automaton;
+import dk.brics.automaton.RegExp;
+import dk.brics.automaton.State;
+import dk.brics.automaton.Transition;
+import fr.iutvalence.automath.app.model.StateInfo;
+import fr.iutvalence.automath.app.model.TransitionInfo;
+import org.snt.autorex.Autorex;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxICell;
-
-import dk.brics.automaton.Automaton;
-import dk.brics.automaton.RegExp;
-import dk.brics.automaton.Transition;
-import dk.brics.automaton.State;
-import fr.iutvalence.automath.app.model.StateInfo;
-import fr.iutvalence.automath.app.model.TransitionInfo;
-import org.snt.autorex.Autorex;
 
 /**
  * AutoMathBasicAutomatonProvider is the class that contains algorithmic actions on the automaton
@@ -68,8 +67,8 @@ public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
 		for (mxCell currentMxCellState : state) {
 			State currentState = new State();
 			StateInfo currentStateInfo = (StateInfo)currentMxCellState.getValue();
-			currentState.setInitial(currentStateInfo.isStarting);
-			currentState.setAccept(currentStateInfo.isAccepting);
+			currentState.setInitial(currentStateInfo.isStarting());
+			currentState.setAccept(currentStateInfo.isAccepting());
 			stateMap.put(currentMxCellState.hashCode(), currentState);
 			if(currentState.isInitial()) {
 				parent.addTransition(new Transition('&', currentState));

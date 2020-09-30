@@ -1,5 +1,12 @@
 package fr.iutvalence.automath.launcher.view.utils;
 
+import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
+import fr.iutvalence.automath.app.io.in.XMLGraphRenderer;
+import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -7,14 +14,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-
-import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
-import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
-import fr.iutvalence.automath.app.io.out.ExportImageSinceXMLRunnable;
 
 /**
  * FilePreviewerWithWorker is redefinition of JFileChooser with a preview of the automaton
@@ -115,7 +114,7 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 				if (f != null) {
 					if (f.getName().endsWith(".xml")) {
 
-						taskThread.run(new ExportImageSinceXMLRunnable(f.getAbsolutePath(),this,automaton));
+						taskThread.run(new XMLGraphRenderer(f.getAbsolutePath(),this,automaton));
 					}
 					else if (f.getName().endsWith(".png")) {
 						loadImage();

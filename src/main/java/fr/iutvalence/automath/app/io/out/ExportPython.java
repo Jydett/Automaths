@@ -1,5 +1,11 @@
 package fr.iutvalence.automath.app.io.out;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
+import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
+import fr.iutvalence.automath.app.model.StateInfo;
+import fr.iutvalence.automath.app.model.TransitionInfo;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -9,13 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxICell;
-
-import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
-import fr.iutvalence.automath.app.model.StateInfo;
-import fr.iutvalence.automath.app.model.TransitionInfo;
-
 /**
  * Contains the logic to convert the graphical automaton to a Python file
  * <p>
@@ -24,17 +23,17 @@ import fr.iutvalence.automath.app.model.TransitionInfo;
  * there are also a function to test the automaton : isRecognized(word), to test the recognition of a word by the automaton
  * </p>
  */
-public class ExportPython {
+public class ExportPython implements Exporter {
 
 	/**
 	 * The list to contain all states of automaton
 	 */
-	private Set<mxCell> states;
+	private final Set<mxCell> states;
 
 	/**
 	 * The list to contain all transition of automaton
 	 */
-	private Set<mxCell> transitions;
+	private final Set<mxCell> transitions;
 	
 	/**
 	 * A constructor of ExportPython, with the parameter graph
@@ -49,7 +48,7 @@ public class ExportPython {
 	 * Convert the graph to python script and save the result to an (.py) file with the specified path in parameter
 	 * @param file The path to saving the file
 	 */
-	public void exportAutomate(String file){
+	public void exportAutomate(String file) {
 		if (file.equals("cancel")) {
 			return;
 		}
@@ -74,13 +73,13 @@ public class ExportPython {
 			mxCell state = it.next();
 			stateMap.put(state, id);
 			
-			if (((StateInfo) state.getValue()).isAccepting) {
+			if (((StateInfo) state.getValue()).isAccepting()) {
 				if (list_of_state_end.length() != 1) {
 					list_of_state_end.append(",");
 				}
 				list_of_state_end.append(id);
 			}
-			if (((StateInfo) state.getValue()).isStarting) {
+			if (((StateInfo) state.getValue()).isStarting()) {
 				if (list_of_state_begin.length() != 1) {
 					list_of_state_begin.append(",");
 				}
