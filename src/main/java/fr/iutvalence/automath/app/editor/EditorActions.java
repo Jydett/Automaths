@@ -48,17 +48,33 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * 
  *
@@ -1123,37 +1139,113 @@ public class EditorActions {
 	 */
 	public static class OpenHelpAction extends AbstractAction {
 
+		private final static String tempDirName = "automathstemp";
+
 		public void actionPerformed(ActionEvent e) {
-			if (Desktop.isDesktopSupported()) {
-				 String url = "file://"+(EditorActions.class.getResource("/html/aide/HTML_Files/indexrepsonsive.html")).getPath();
-				 System.out.println(url);
-				 url = "file://"+System.getProperty("user.dir")+"/bin/html/aide/HTML_Files/indexrepsonsive.html";
-//				 url.replace((char) 0x5C, '/');
-				 
-				 StringBuilder finalUrl = new StringBuilder();
-				 for (Character c : url.toCharArray()) {
-					 if(c.equals((char) 0x5C)) {
-						 finalUrl.append('/');
-					 } else {
-						 finalUrl.append(c);
-					 }
-				 }
-				 System.out.println(url);
-				 url = finalUrl.toString();
-				 System.out.println(url);
-		        try {
-			        if (Desktop.isDesktopSupported()) {
-			            // Windows
-			            Desktop.getDesktop().browse(new URI(url));
-			        } else {
-			            // Ubuntu
-			            Runtime runtime = Runtime.getRuntime();
-						runtime.exec("xdg-open " + url);
-			        }
-				} catch (IOException | URISyntaxException e1) {
-					getEditor(e).displayMessage(mxResources.get("XMLERROR"), mxResources.get("Error"), JOptionPane.ERROR_MESSAGE);
+			String tempDir = System.getProperty("java.io.tmpdir");
+			if (tempDir.charAt(tempDir.length() - 1) != File.separatorChar) {
+				tempDir = tempDir + File.separatorChar;
+			}
+			String tempPath = tempDir + tempDirName;
+			File tempdir = new File(tempPath);
+			if (! tempdir.exists()) {
+				tempdir.mkdir();
+				try {
+					getPathsFromResourceJAR("html", path -> {
+						try {
+							String filePathInJAR = path.toString().replace("/", File.separator);
+
+							String htmlHint = File.separatorChar + "html" + File.separatorChar;
+
+							String fileRelativePath = filePathInJAR.substring(filePathInJAR.indexOf(htmlHint) + htmlHint.length() - 1);
+
+							String fullFilePath = tempPath + fileRelativePath;
+							new File(fullFilePath.substring(0, fullFilePath.lastIndexOf(File.separatorChar))).mkdirs();
+							File tempFileOut = new File(fullFilePath);
+							tempFileOut.createNewFile();
+							try(InputStream in = new BufferedInputStream(Files.newInputStream(path));
+								OutputStream out = new BufferedOutputStream(new FileOutputStream(tempFileOut, false))) {
+								copy(in, out);
+							}
+							return null;
+						} catch (Exception exception) {
+							return exception;
+						}
+					});
+				} catch (URISyntaxException | IOException exception) {
+					exception.printStackTrace();
+					return;
+				}
+				tempdir.deleteOnExit();
+			}
+
+			String url = ("file://" + tempPath + "|aide|HTML_Files|indexrepsonsive.html")
+				.replace("|", "/")
+				.replace(File.separator, "/");
+			try {
+				if (Desktop.isDesktopSupported()) {
+					// Windows
+					Desktop.getDesktop().browse(new URI(url));
+				} else {
+					// Ubuntu
+					Runtime runtime = Runtime.getRuntime();
+					runtime.exec("xdg-open " + url);
+				}
+			} catch (IOException | URISyntaxException e1) {
+				getEditor(e).displayMessage(mxResources.get("Exception"), mxResources.get("Error"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		void copy(InputStream source, OutputStream target) throws IOException {
+			byte[] buf = new byte[8192];
+			int length;
+			while ((length = source.read(buf)) > 0) {
+				target.write(buf, 0, length);
+			}
+		}
+
+		private void getPathsFromResourceJAR(String folder, Function<Path, Exception> whatToDo)
+			throws URISyntaxException, IOException {
+
+			// get path of the current running JAR
+			String jarPath = getClass().getProtectionDomain()
+				.getCodeSource()
+				.getLocation()
+				.toURI()
+				.getPath();
+			if (! jarPath.endsWith(".jar")) {
+				getAllFilesFromResource(folder)
+					.stream()
+					.map(whatToDo)
+					.filter(Objects ::nonNull)
+					.findAny()
+					.ifPresent(Throwable :: printStackTrace);
+			} else {
+				// file walks JAR
+				URI uri = URI.create("jar:file:" + jarPath);
+				try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
+					Files.walk(fs.getPath(folder))
+						.filter(Files::isRegularFile)
+						.map(whatToDo)
+						.filter(Objects ::nonNull)
+						.findAny()
+						.ifPresent(Throwable :: printStackTrace);
 				}
 			}
+		}
+
+		private List<Path> getAllFilesFromResource(String folder)
+			throws URISyntaxException, IOException {
+
+			ClassLoader classLoader = getClass().getClassLoader();
+
+			URL resource = classLoader.getResource(folder);
+
+			// dun walk the root path, we will walk all the classes
+
+			return Files.walk(Paths.get(resource.toURI()))
+				.filter(Files::isRegularFile)
+				.collect(Collectors.toList());
 		}
 	}
 }
