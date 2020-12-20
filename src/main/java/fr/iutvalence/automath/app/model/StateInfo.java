@@ -1,10 +1,14 @@
 package fr.iutvalence.automath.app.model;
 
 import com.mxgraph.model.mxICell;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxResources;
+import fr.iutvalence.automath.app.view.utils.StyleUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Map;
 
 /**
  * Contains the information of a <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.model.mxCell}</a>'s vertex form.
@@ -34,15 +38,22 @@ public class StateInfo implements CellInfo {
 	 * @param c the cell linked to this {@link StateInfo}
 	 */
 	public void refresh(mxICell c) {
+		Map<String, String> cellStyle = StyleUtils.parseStyle(c.getStyle());
+		String rotation = cellStyle.get(mxConstants.STYLE_ROTATION);
+		String finalStyle;
 		if (accepting && starting) {
-			c.setStyle(FiniteStateAutomatonGraph.styleFinalBeginState);
+			finalStyle = FiniteStateAutomatonGraph.STYLE_FINAL_BEGIN_STATE;
 		} else if(starting) {
-			c.setStyle(FiniteStateAutomatonGraph.styleBeginState);
+			finalStyle = FiniteStateAutomatonGraph.STYLE_BEGIN_STATE;
 		} else if(accepting) {
-			c.setStyle(FiniteStateAutomatonGraph.styleFinalState);
+			finalStyle = FiniteStateAutomatonGraph.STYLE_FINAL_STATE;
 		} else {
-			c.setStyle(FiniteStateAutomatonGraph.styleDefaultState);
+			finalStyle = FiniteStateAutomatonGraph.STYLE_DEFAULT_STATE;
 		}
+		if (rotation != null) {
+			finalStyle = finalStyle + ";" + mxConstants.STYLE_ROTATION + "=" + rotation;
+		}
+		c.setStyle(finalStyle);
 	}
 
 	/**

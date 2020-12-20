@@ -68,14 +68,14 @@ public class StateSelectorPanel extends JPanel {
 		beginState.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(beginState);
 		
-		mxCell cell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleDefaultState);
+		mxCell cell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.STYLE_DEFAULT_STATE);
 		mxRectangle bounds = (mxGeometry) cell.getGeometry().clone();
 		
 		graph.getModel().setValue(cell, new StateInfo(false, false, ""));
 		
 		final mxGraphTransferable t = new mxGraphTransferable(new Object[] { cell }, bounds);
 		
-		mxCell beginCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleBeginState);
+		mxCell beginCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.STYLE_BEGIN_STATE);
 		mxRectangle boundsb = (mxGeometry) beginCell.getGeometry().clone();
 		final mxGraphTransferable tb = new mxGraphTransferable(new Object[] { beginCell }, boundsb);
 		

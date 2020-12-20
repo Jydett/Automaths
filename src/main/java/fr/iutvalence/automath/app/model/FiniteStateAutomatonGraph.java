@@ -45,12 +45,12 @@ import java.util.Set;
  */
 public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoMathBasicGraph {
 
-	public static final String styleState = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1";
-	public static final String styleBeginState = styleState+";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
-	public static final String styleDefaultState = styleState+";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=stateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
-	public static final String styleFinalState = styleState+";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=endingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
-	public static final String styleTransition = mxConstants.STYLE_ROUNDED+"=1;"+mxConstants.STYLE_STARTARROW + "=" + mxConstants.NONE+";"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black";
-	public static final String styleFinalBeginState = styleState+";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginEndingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
+	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1";
+	public static final String STYLE_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
+	public static final String STYLE_DEFAULT_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=stateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
+	public static final String STYLE_FINAL_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=endingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
+	public static final String STYLE_TRANSITION = mxConstants.STYLE_ROUNDED+"=1;"+mxConstants.STYLE_STARTARROW + "=" + mxConstants.NONE+";"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black";
+	public static final String STYLE_FINAL_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginEndingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	
 	/**
 	 * The radius of a state
@@ -258,7 +258,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	
 	public Object insertEdge(String c, Object source, Object target) {
 		return insertEdge(getDefaultParent(), null,
-				c, source, target, FiniteStateAutomatonGraph.styleTransition);
+				c, source, target, FiniteStateAutomatonGraph.STYLE_TRANSITION);
 	}
 	
 	public void minimize() {
@@ -283,13 +283,13 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		for (State currentStateOfAutomate : listOfState) {
 			String style;
 			if(currentStateOfAutomate.isAccept() && currentStateOfAutomate.isInitial()) {
-				style = FiniteStateAutomatonGraph.styleFinalBeginState;
+				style = FiniteStateAutomatonGraph.STYLE_FINAL_BEGIN_STATE;
 			} else if (currentStateOfAutomate.isAccept()) {
-				style = FiniteStateAutomatonGraph.styleFinalState;
+				style = FiniteStateAutomatonGraph.STYLE_FINAL_STATE;
 			} else if (currentStateOfAutomate.isInitial()) {
-				style = FiniteStateAutomatonGraph.styleBeginState;
+				style = FiniteStateAutomatonGraph.STYLE_BEGIN_STATE;
 			} else {
-				style = FiniteStateAutomatonGraph.styleDefaultState;
+				style = FiniteStateAutomatonGraph.STYLE_DEFAULT_STATE;
 			}
 			Object cell = insertState(getDefaultParent(),Integer.toString(i),
 					0d,0d,style,currentStateOfAutomate.isAccept(),currentStateOfAutomate.isInitial());
@@ -305,7 +305,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 				String c = automaton.getString(currentTransitionOfAutomate);
 				Object target = cellMap.get(currentTransitionOfAutomate.getDest().hashCode());
 				insertEdge(getDefaultParent(), null, 
-						c, source, target, FiniteStateAutomatonGraph.styleTransition);
+						c, source, target, FiniteStateAutomatonGraph.STYLE_TRANSITION);
 			}
 		}
 		if (delParent) {
@@ -320,7 +320,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 
 	public Object addEdge(String c, Object source, Object target) {
 		getModel().beginUpdate();
-		Object obj = insertEdge(getDefaultParent(), null, c, source, target, styleTransition);
+		Object obj = insertEdge(getDefaultParent(), null, c, source, target, STYLE_TRANSITION);
 		getModel().endUpdate();
 		return obj;
 	}
@@ -328,13 +328,13 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	public Object addState(String id, double x, double y, boolean accept, boolean initial) {
 		String style;
 		if (accept && initial) {
-			style = styleFinalBeginState;
+			style = STYLE_FINAL_BEGIN_STATE;
 		} else if (accept) {
-			style = styleFinalState;
+			style = STYLE_FINAL_STATE;
 		} else if (initial) {
-			style = styleBeginState;
+			style = STYLE_BEGIN_STATE;
 		} else {
-			style = styleDefaultState;
+			style = STYLE_DEFAULT_STATE;
 		}
 		getModel().beginUpdate();
 		Object obj = addState(getDefaultParent(), id, x, y, style, accept, initial);

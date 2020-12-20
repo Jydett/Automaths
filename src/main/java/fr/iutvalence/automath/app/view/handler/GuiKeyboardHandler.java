@@ -38,7 +38,6 @@ public class GuiKeyboardHandler extends mxKeyboardHandler {
 			map.put(KeyStroke.getKeyStroke("control Y"), "redo");
 			map.put(KeyStroke.getKeyStroke("control shift V"), "selectVertices");
 			map.put(KeyStroke.getKeyStroke("control shift E"), "selectEdges");
-			map.put(KeyStroke.getKeyStroke("suppr"), "delete");
 		}
 		return map;
 	}
@@ -59,7 +58,7 @@ public class GuiKeyboardHandler extends mxKeyboardHandler {
 			map.put("saveAs", new EditorActions.SaveExamAction(true));	
 		}
 		map.put("new", new EditorActions.NewAction());
-		map.put("suppr", new EditorActions.DeleteAction());
+		map.put("delete", new EditorActions.DeleteAction());
 		map.put("undo", new EditorActions.HistoryAction(true));
 		map.put("redo", new EditorActions.HistoryAction(false));
 		map.put("selectVertices", mxGraphActions.getSelectVerticesAction());

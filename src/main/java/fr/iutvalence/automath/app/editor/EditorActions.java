@@ -153,27 +153,23 @@ public class EditorActions {
 	{
 		public SetFinalAction(String name) {
 			super(name);
-			addActionListener(new ActionListener(){
-		
-				public void actionPerformed(ActionEvent e){
-					GUIPanel editor = getEditor(e);
-					FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
-					Object state = graph.getSelectionCell();
-					if(state != null) {
-						if(((mxCell)state).isVertex()) {
-							StateInfo stInfo = ((StateInfo)((mxCell)state).getValue());
-							mxIGraphModel model = graph.getModel();
+			addActionListener(e -> {
+				GUIPanel editor = getEditor(e);
+				FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
+				Object state = graph.getSelectionCell();
+				if (state != null) {
+					if (((mxCell) state).isVertex()) {
+						StateInfo stInfo = ((StateInfo)((mxCell)state).getValue());
+						mxIGraphModel model = graph.getModel();
 
-							model.beginUpdate();
-							stInfo.setAccepting(! stInfo.isAccepting());
-							model.setValue(state, stInfo);
-							stInfo.refresh((mxCell) state);
-							model.endUpdate();
-							editor.getCellDescriptorPanel().refresh();
-						}else {
-							//System.err.println("InitialAction called on non vertex cell !");
-						}
+						model.beginUpdate();
+						stInfo.setAccepting(! stInfo.isAccepting());
+						model.setValue(state, stInfo);
+						stInfo.refresh((mxCell) state);
+						model.endUpdate();
+						editor.getCellDescriptorPanel().refresh();
 					}
+
 				}
 			});
 		}

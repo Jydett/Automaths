@@ -63,13 +63,13 @@ public class RecognitionStateSelectorPanel extends StateSelectorPanel {
 		finalBeginState.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(finalBeginState);
 		
-		mxCell finalCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleFinalState);
+		mxCell finalCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.STYLE_FINAL_STATE);
 		mxRectangle boundsf = (mxGeometry) finalCell.getGeometry().clone();
 		final mxGraphTransferable tf = new mxGraphTransferable(new Object[] { finalCell }, boundsf);
 		
 		graph.getModel().setValue(finalCell, new StateInfo(true, false, ""));
 		
-		mxCell finalBeginCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.styleFinalBeginState);
+		mxCell finalBeginCell = new mxCell("", new mxGeometry(0, 0, 50, 50),FiniteStateAutomatonGraph.STYLE_FINAL_BEGIN_STATE);
 		mxRectangle boundsfb = (mxGeometry) finalBeginCell.getGeometry().clone();
 		final mxGraphTransferable tfb = new mxGraphTransferable(new Object[] { finalBeginCell }, boundsfb);
 		

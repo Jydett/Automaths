@@ -8,12 +8,7 @@ import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 
 import com.mxgraph.util.mxResources;
 
@@ -70,9 +65,7 @@ public class SimulationPanel extends JPanel {
 	 */
 	public SimulationPanel(GUIPanel ep, SimulationProvider simul) {
 		this.simulationProvider = simul;
-		/**
-		 * element du pannel Simulation
-		 */
+		//elements du panel Simulation
 		JTextFieldCustom word = new JTextFieldCustom(simul);  // Allocate JTextArea
 		JScrollPane tAreaScrollPane = new JScrollPane(word);  // Allocate JScrollPane which wraps the JTextArea
 		tAreaScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -82,12 +75,14 @@ public class SimulationPanel extends JPanel {
 
 		add(tAreaScrollPane);
 
-		JButton start = new JButton("> start");
+		JButton start = new JButton(mxResources.get("Simulation.Start"));
+		start.setIcon(new ImageIcon(SimulationPanel.class.getResource("/img/icon/execute.gif")));
 
-		JButton reset = new JButton("<<< reset");
+		JButton reset = new JButton(mxResources.get("Simulation.Reset"));
+		reset.setIcon(new ImageIcon(SimulationPanel.class.getResource("/img/icon/rollback.gif")));
 
-		JButton toTheEnd = new JButton("|>> to the END");
-
+		JButton toTheEnd = new JButton(mxResources.get("Simulation.ToTheEnd"));
+		toTheEnd.setIcon(new ImageIcon(SimulationPanel.class.getResource("/img/icon/resume.gif")));
 
 		reset.setEnabled(false);
 		editor = ep;
@@ -120,7 +115,7 @@ public class SimulationPanel extends JPanel {
 				word.setSimulation(true);
 				start.removeActionListener(start.getActionListeners()[0]);
 				start.addActionListener(nextAction);
-				start.setText("> next");
+				start.setText(mxResources.get("Simulation.Next"));
 				reset.setEnabled(true);
 				editor.setAppStatusText(mxResources.get("SimulationRunning"));
 			} catch (WordIsEmptyException e1) {
@@ -142,7 +137,7 @@ public class SimulationPanel extends JPanel {
 			word.setReset();
 			word.setSimulation(false);
 			editor.getUndoManager().setEventsEnabled(true);
-			start.setText("|> start");
+			start.setText(mxResources.get("Simulation.Start"));
 			start.removeActionListener(start.getActionListeners()[0]);
 			start.addActionListener(beginAction);
 			reset.setEnabled(false);

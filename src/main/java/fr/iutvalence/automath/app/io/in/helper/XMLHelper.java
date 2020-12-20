@@ -63,13 +63,13 @@ public class XMLHelper {
             style = style + ";";
         }
         if (accept && initial) {
-            style = style + FiniteStateAutomatonGraph.styleFinalBeginState;
+            style = style + FiniteStateAutomatonGraph.STYLE_FINAL_BEGIN_STATE;
         } else if (accept) {
-            style = style + FiniteStateAutomatonGraph.styleFinalState;
+            style = style + FiniteStateAutomatonGraph.STYLE_FINAL_STATE;
         } else if (initial) {
-            style = style + FiniteStateAutomatonGraph.styleBeginState;
+            style = style + FiniteStateAutomatonGraph.STYLE_BEGIN_STATE;
         } else {
-            style = style + FiniteStateAutomatonGraph.styleDefaultState;
+            style = style + FiniteStateAutomatonGraph.STYLE_DEFAULT_STATE;
         }
         return graph.insertState(graph.getDefaultParent(), id, x, y, style, accept, initial);
     }

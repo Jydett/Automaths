@@ -102,7 +102,7 @@ public class RotationVertexHandler extends mxVertexHandler {
 
                 this.currentAngleRad = Math.atan2(y - pt.getY(), x - pt.getX()) + this.initialAngleRad + _5PI4;
                 dirty.add(mxUtils.getBoundingBox(this.state, this.currentAngleRad * mxConstants.DEG_PER_RAD));
-                dirty.grow(1.0D);
+                dirty.grow(5);
                 this.graphComponent.getGraphControl().repaint(dirty.getRectangle());
                 e.consume();
             } else {

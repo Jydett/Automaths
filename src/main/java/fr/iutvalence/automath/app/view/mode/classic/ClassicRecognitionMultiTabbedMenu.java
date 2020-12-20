@@ -9,9 +9,7 @@ import fr.iutvalence.automath.app.view.menu.MultiTabbedMenu;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.view.panel.SimulationPanel;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,9 +31,10 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 		importerExpression = new ImporterRegularExpression(((InterfaceAutoMathBasicGraph)editor.getGraphComponent().getGraph()), expressionText);
 		
 		JButton expressionButton = new JButton(mxResources.get("ImportRegex"));
+		expressionButton.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/inlayGear.gif")));
 		expressionButton.setToolTipText(mxResources.get("ImportRegexTip"));
 		expressionButton.addActionListener(new ActionListener() {
-			final String statusName = mxResources.get("GenerationFromRegularExp");
+			final String statusName = mxResources.get("GenerationFromRegularExp");//FIXME this doesn't work ?
 			private boolean isGenerating = false;
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -55,6 +54,7 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 
 		JButton toRegexButton = new JButton(mxResources.get("ExportRegex"));
 		toRegexButton.setToolTipText(mxResources.get("ExportRegexTip"));
+		toRegexButton.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/regex.gif")));
 		toRegexButton.addActionListener(new ActionListener() {
 			final String statusName = mxResources.get("GenerationToRegularExp");
 			private boolean isGenerating = false;
@@ -74,8 +74,12 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 		expressionPanel.add(expressionButton);
 		expressionPanel.add(toRegexButton);
 
-		processingPanel.add(new JButton(new EditorActions.OrganicAction()));
-		processingPanel.add(new JButton(new EditorActions.CircularAction()));
+		JButton comp = new JButton(new EditorActions.OrganicAction());
+		comp.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/organic.gif")));
+		processingPanel.add(comp);
+		JButton circular = new JButton(new EditorActions.CircularAction());
+		circular.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/circular.gif")));
+		processingPanel.add(circular);
 		processingPanel.add(new JButton(new EditorActions.MinimizeAction(mxResources.get("Minimize"))));
 		processingPanel.add(new JButton(new EditorActions.DeterminizeAction(mxResources.get("Determinize"))));
 		
