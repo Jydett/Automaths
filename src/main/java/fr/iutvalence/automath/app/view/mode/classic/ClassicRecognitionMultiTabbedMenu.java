@@ -4,6 +4,7 @@ import com.mxgraph.util.mxResources;
 import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
 import fr.iutvalence.automath.app.editor.EditorActions;
 import fr.iutvalence.automath.app.io.in.ImporterRegularExpression;
+import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.model.SimulationProvider;
 import fr.iutvalence.automath.app.view.menu.MultiTabbedMenu;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
@@ -12,21 +13,24 @@ import fr.iutvalence.automath.app.view.panel.SimulationPanel;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 
 	private static final long serialVersionUID = 4986650029408421333L;
 	
 	private final ImporterRegularExpression importerExpression;
-	
+	private final JTextField expressionText;
+	private final AtomicBoolean generating = new AtomicBoolean(false);
+
 	public ClassicRecognitionMultiTabbedMenu(GUIPanel editor) {
 		super(editor);
 		
 		JPanel expressionPanel = new JPanel();
 		JPanel processingPanel = new JPanel();
 		JPanel simulationPanel = new SimulationPanel(editor, new SimulationProvider(editor));
-		
-		JTextField expressionText = new JTextField();
+
+		expressionText = new JTextField();
 		expressionText.setColumns(15);
 		importerExpression = new ImporterRegularExpression(((InterfaceAutoMathBasicGraph)editor.getGraphComponent().getGraph()), expressionText);
 		
@@ -34,20 +38,19 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 		expressionButton.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/inlayGear.gif")));
 		expressionButton.setToolTipText(mxResources.get("ImportRegexTip"));
 		expressionButton.addActionListener(new ActionListener() {
-			final String statusName = mxResources.get("GenerationFromRegularExp");//FIXME this doesn't work ?
-			private boolean isGenerating = false;
+			final String statusName = mxResources.get("GenerationFromRegularExp");
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (! isGenerating) {
-					isGenerating = true;
+				if (! generating.get()) {
+					generating.set(true);
 					long t0 = System.currentTimeMillis();
 					try {
 						importerExpression.importAutomaton();
 					} catch (Exception exception) {
 						exception.printStackTrace();
 					}
+					generating.set(false);
 					editor.setAppStatusText(statusName+" : " + (System.currentTimeMillis() - t0)+ " ms");
-					isGenerating = false;
 				}
 			}
 		});
@@ -57,14 +60,15 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 		toRegexButton.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/regex.gif")));
 		toRegexButton.addActionListener(new ActionListener() {
 			final String statusName = mxResources.get("GenerationToRegularExp");
-			private boolean isGenerating = false;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (! isGenerating) {
-					isGenerating = true;
+				if (! generating.get()) {
+					generating.set(true);
 					long t0 = System.currentTimeMillis();
-					isGenerating = false;
+					FiniteStateAutomatonGraph graph = (FiniteStateAutomatonGraph) (editor.getGraphComponent().getGraph());
+					expressionText.setText(graph.getAutomaton().getRegex(graph.getAllState(), graph.getAllTransition()));
+					generating.set(false);
 					editor.setAppStatusText(statusName+" : " + (System.currentTimeMillis() - t0)+ " ms");
 				}
 			}

@@ -55,6 +55,8 @@
             <groupId>com.github.julianthome</groupId>
             <artifactId>autorex</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/autorex-1.0-SNAPSHOT-shaded.jar</systemPath>
         </dependency>
     </dependencies>
 

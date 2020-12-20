@@ -42,7 +42,7 @@ public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
 	public String getRegex(Set<mxCell> state, Set<mxCell> transitions) {
 		Automaton automate = getAutomate(state, transitions);
 
-		return Autorex.getRegexFromAutomaton(automate).replace("(.{0})","").replace(".{0}","");
+		return Autorex.getRegexFromAutomaton(automate).replace("(.{0})","").replace(".{0}","").replace("\\&", "");
 	}
 
 	public Automaton generateAutomateWithExpReg(String text){
