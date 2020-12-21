@@ -119,27 +119,20 @@ public class EditorActions {
 		
 				public void actionPerformed(ActionEvent e){
 					GUIPanel editor = getEditor(e);
-					if(e.getSource() instanceof Component) {
-						@SuppressWarnings("unused")
-						Component comp = ((Component)e.getSource());
-					}
 					FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
-					Object state = graph.getSelectionCell();
-					if (state != null) {
-						if (((mxCell)state).isVertex()) {
-							StateInfo stInfo = ((StateInfo)((mxCell)state).getValue());
-							mxIGraphModel model = graph.getModel();
-
-							model.beginUpdate();
-							stInfo.setStarting(! stInfo.isStarting());
+					Object[] states = graph.getSelectionCells();
+					mxIGraphModel model = graph.getModel();
+					model.beginUpdate();
+					for (Object state : states) {
+						if (((mxCell) state).isVertex()) {
+							StateInfo stInfo = ((StateInfo) ((mxCell) state).getValue());
+							stInfo.setStarting(!stInfo.isStarting());
 							model.setValue(state, stInfo);
 							stInfo.refresh((mxCell) state);
-							model.endUpdate();
-							editor.getCellDescriptorPanel().refresh();
-						} else {
-							//System.err.println("InitialAction called on non vertex cell !");
 						}
 					}
+					model.endUpdate();
+					editor.getCellDescriptorPanel().refresh();
 				}
 			});
 		}
@@ -155,22 +148,20 @@ public class EditorActions {
 			super(name);
 			addActionListener(e -> {
 				GUIPanel editor = getEditor(e);
-				FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
-				Object state = graph.getSelectionCell();
-				if (state != null) {
+				FiniteStateAutomatonGraph graph = (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
+				Object[] states = graph.getSelectionCells();
+				mxIGraphModel model = graph.getModel();
+				model.beginUpdate();
+				for (Object state : states) {
 					if (((mxCell) state).isVertex()) {
-						StateInfo stInfo = ((StateInfo)((mxCell)state).getValue());
-						mxIGraphModel model = graph.getModel();
-
-						model.beginUpdate();
-						stInfo.setAccepting(! stInfo.isAccepting());
+						StateInfo stInfo = ((StateInfo) ((mxCell) state).getValue());
+						stInfo.setAccepting(!stInfo.isAccepting());
 						model.setValue(state, stInfo);
 						stInfo.refresh((mxCell) state);
-						model.endUpdate();
-						editor.getCellDescriptorPanel().refresh();
 					}
-
 				}
+				model.endUpdate();
+				editor.getCellDescriptorPanel().refresh();
 			});
 		}
 	}

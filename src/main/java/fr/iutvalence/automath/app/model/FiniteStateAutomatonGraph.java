@@ -6,12 +6,12 @@ import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.shape.mxBasicShape;
-import com.mxgraph.shape.mxDoubleEllipseShape;
-import com.mxgraph.shape.mxEllipseShape;
+import com.mxgraph.shape.*;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxPoint;
+import com.mxgraph.util.mxUtils;
+import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import dk.brics.automaton.Automaton;
@@ -22,6 +22,7 @@ import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
 import fr.iutvalence.automath.app.view.shape.BeginEndingStateShape;
 import fr.iutvalence.automath.app.view.shape.BeginStateShape;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.Set;
  */
 public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoMathBasicGraph {
 
-	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1";
+	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1;" + mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_CENTER;
 	public static final String STYLE_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	public static final String STYLE_DEFAULT_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=stateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	public static final String STYLE_FINAL_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=endingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
@@ -116,7 +117,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	public FiniteStateAutomatonGraph(InterfaceAutomaton automaton) {
 		super();
 		this.automaton = automaton;
-		
+		registerTextShape();
 		registerStateShapes();
 
 		super.setAllowDanglingEdges(false);
@@ -145,6 +146,80 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		
 		registerListeners();
 		new mxParallelEdgeLayout(this).execute(this.getDefaultParent());
+
+	}
+
+	private void registerTextShape() {
+		mxDefaultTextShape mxDefaultTextShape = new mxDefaultTextShape() {
+			@Override
+			public void paintShape(mxGraphics2DCanvas canvas, String text, mxCellState state, Map<String, Object> style) {
+				Rectangle rect = state.getLabelBounds().getRectangle();
+				Graphics2D g = canvas.getGraphics();
+				if (g.getClipBounds() == null || g.getClipBounds().intersects(rect)) {
+					boolean horizontal = mxUtils.isTrue(style, mxConstants.STYLE_HORIZONTAL, true);
+					double scale = canvas.getScale();
+					int x = rect.x;
+					int y = rect.y;
+					int w = rect.width;
+					int h = rect.height;
+					if (!horizontal) {
+						g.rotate(-1.5707963267948966D, (double)(x + w / 2), (double)(y + h / 2));
+						g.translate(w / 2 - h / 2, h / 2 - w / 2);
+					}
+
+					String[] lines = text.split("\n");
+
+					Color fontColor = mxUtils.getColor(style, mxConstants.STYLE_FONTCOLOR, Color.black);
+					g.setColor(fontColor);
+					Font scaledFont = mxUtils.getFont(style, scale);
+					g.setFont(scaledFont);
+					int fontSize = mxUtils.getInt(style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+					FontMetrics fm = g.getFontMetrics();
+					int scaledFontSize = scaledFont.getSize();
+					double fontScaleFactor = (double)scaledFontSize / (double)fontSize;
+					double fontScaleRatio = fontScaleFactor / scale;
+					int nbLines = lines.length;
+
+					y = (int)((double)y + fm.getHeight() * nbLines);
+					Object vertAlign = mxUtils.getString(style, mxConstants.STYLE_VERTICAL_ALIGN, "middle");
+					double vertAlignProportion = 0.5D;
+					if (vertAlign.equals("top")) {
+						vertAlignProportion = 0.0D;
+					} else if (vertAlign.equals("bottom")) {
+						vertAlignProportion = 1.0D;
+					}
+
+					y = (int)((double)y + (1.0D - fontScaleRatio) * (double)h * vertAlignProportion);
+					Object align = mxUtils.getString(style, mxConstants.STYLE_ALIGN, "center");
+					if (align.equals("left")) {
+						x = (int)((double)x + (double)mxConstants.LABEL_INSET * scale);
+					} else if (align.equals("right")) {
+						x = (int)((double)x - (double)mxConstants.LABEL_INSET * scale);
+					}
+
+					for (String line : lines) {
+						int dx = 0;
+						int sw;
+						if (align.equals("center")) {
+							sw = fm.stringWidth(line);
+							if (horizontal) {
+								dx = (int) Math.ceil((double)(w - sw) / 2);
+							} else {
+								dx = (h - sw) / 2;
+							}
+						} else if (align.equals("right")) {
+							sw = fm.stringWidth(line);
+							dx = (horizontal ? w : h) - sw;
+						}
+
+						g.drawString(line, x + dx, y);
+						this.postProcessLine(text, line, fm, canvas, x + dx, y);
+						y += fm.getHeight() + mxConstants.LINESPACING;
+					}
+				}
+			}
+		};
+		mxGraphics2DCanvas.putTextShape(mxGraphics2DCanvas.TEXT_SHAPE_DEFAULT, mxDefaultTextShape);
 	}
 
 	private void registerListeners() {

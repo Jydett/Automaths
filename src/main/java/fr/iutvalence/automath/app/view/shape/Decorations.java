@@ -19,5 +19,13 @@ public enum Decorations implements DecorativeShape {
             graphics.drawLine((int) (dx+state.getX()), (int) (0+state.getY()), (int) (dx+state.getX()), (int) (dy+state.getY()));
 
         }
+    },
+    TARGET() {
+        @Override
+        public void drawDecoration(Graphics2D graphics, mxCellState state) {
+            Rectangle rectangle = state.getRectangle();
+            graphics.drawLine((int)rectangle.getCenterX(), rectangle.y, (int)rectangle.getCenterX(), rectangle.y + rectangle.height);
+            graphics.drawLine(rectangle.x, (int) rectangle.getCenterY(), rectangle.x + rectangle.width, (int) rectangle.getCenterY());
+        }
     }
 }
