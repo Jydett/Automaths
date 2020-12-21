@@ -1,12 +1,5 @@
 package fr.iutvalence.automath.app.view.panel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
@@ -16,7 +9,13 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
-import fr.iutvalence.automath.app.view.panel.GUIPanel;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class RecognitionGUIPanel extends GUIPanel {
 	
@@ -98,13 +97,13 @@ public abstract class RecognitionGUIPanel extends GUIPanel {
 				graph.getModel().setGeometry(edge, geometryOfEdge);
 			}
 
-			private mxCell hasConnectionBetween(mxCell cell1, mxCell cell2, String exludeId) {
+			private mxCell hasConnectionBetween(mxCell cell1, mxCell cell2, String excludeId) {
 				assert cell1.isVertex();
 				assert cell2.isVertex();
 				for (int i = 0; i < cell1.getEdgeCount(); i++) {
 					mxCell anEdge = (mxCell) cell1.getEdgeAt(i);
 					if (anEdge.getSource().getId().equals(cell2.getId()) || anEdge.getTarget().getId().equals(cell2.getId())) {
-						if (! anEdge.getId().equals(exludeId)) {
+						if (! anEdge.getId().equals(excludeId)) {
 							return anEdge;
 						}
 					}

@@ -12,13 +12,13 @@ public class ExamAutomatonModeMenu extends AutomatonModeMenu {
 	}
 	
 	protected void actionButton1() {
-		Header.getInstanceOfHeader(UserProfile.EXAMEN);
+		Header.getInstanceOfHeader(UserProfile.EXAM);
 		GUIPanel editorPanel = new ExamRecognitionGUIPanel();
 		editorPanel.createFrame(new ExamMenuBar(editorPanel)).setVisible(true);
 	}
 	
 	protected void actionButton2() {
-		Header.getInstanceOfHeader(UserProfile.EXAMEN);
+		Header.getInstanceOfHeader(UserProfile.EXAM);
 		GUIPanel editorPanel = new ExamTranslationGUIPanel();
 		editorPanel.createFrame(new ExamMenuBar(editorPanel)).setVisible(true);
 	}

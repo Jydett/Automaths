@@ -10,19 +10,25 @@ import fr.iutvalence.automath.app.editor.EditorActions.SetInitialAction;
 import fr.iutvalence.automath.app.model.StateInfo;
 import fr.iutvalence.automath.app.view.panel.CellDescriptorPane;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
+import lombok.Getter;
 
-import javax.swing.JPopupMenu;
-import javax.swing.TransferHandler;
+import javax.swing.*;
+
 /**
  * It serves to have a menu when the user do a right click on the automate
  */
 public class PopUpMenu extends JPopupMenu {
 
 	private static final long serialVersionUID = 1L;
-	/**The description about a component*/
+	/** The description about a component */
 	public CellDescriptorPane descriptor;
-	/** The GUI interface pannel*/
-	private final GUIPanel editor;
+	/** The GUI interface panel */
+	@Getter
+	private GUIPanel editor;
+
+	public PopUpMenu() {
+		super();
+    }
 
 	/**
 	 * Build the popup menu about a state
@@ -30,26 +36,18 @@ public class PopUpMenu extends JPopupMenu {
 	 * @param cell
 	 * @param type
 	 */
-	public PopUpMenu(GUIPanel editor,mxCell cell,TargetType type) {
-    	super();
-    	this.editor = editor;
-    	this.descriptor = editor.getCellDescriptorPanel();
-    	
-    	update(cell,type);
-    }
-    /**
-     * Return a GUIPanel
-     * @return editor
-     */
-    public GUIPanel getEditor() {
-		return editor;
+    public void init(GUIPanel editor, mxCell cell, TargetType type) {
+		this.editor = editor;
+		this.descriptor = editor.getCellDescriptorPanel();
+		update(cell,type);
 	}
+
 	/**
 	 * Update or get properties about the state, a transition or a GraphComponent 
 	 * @param cell
 	 * @param type
 	 */
-	private void update(mxCell cell, TargetType type) {
+	protected void update(mxCell cell, TargetType type) {
 		switch(type) {
 			case State :
 				StateInfo stInfo =(StateInfo)cell.getValue();
@@ -74,16 +72,16 @@ public class PopUpMenu extends JPopupMenu {
 		}
 	}
 
-	private void addReorderAction() {
+	protected void addReorderAction() {
 		add(new ReorderAction(mxResources.get("ToFront"), false));
 		add(new ReorderAction(mxResources.get("ToBack"), true));
 	}
 
-	private void addDeleteAction() {
+	protected void addDeleteAction() {
 		add(editor.bind(mxResources.get("Delete"), new DeleteAction(), "/img/icon/delete.gif"));
 	}
 
-	private void addCopyCutPasteActions() {
+	protected void addCopyCutPasteActions() {
 		add(editor.bind(mxResources.get("Copy"), TransferHandler.getCopyAction(), "/img/icon/copy.gif"));
 		add(editor.bind(mxResources.get("Cut"), TransferHandler.getCutAction(), "/img/icon/cut.gif"));
 		add(editor.bind(mxResources.get("Paste"), TransferHandler.getPasteAction(), "/img/icon/paste.gif"));
@@ -95,6 +93,4 @@ public class PopUpMenu extends JPopupMenu {
 	public enum TargetType {
 		GraphComponent, State, Transition
 	}
-	
-	
 }

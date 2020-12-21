@@ -23,8 +23,9 @@ import com.mxgraph.util.*;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
-import fr.iutvalence.automath.app.bridge.AutoMathBasicAutomatonProvider;
+import fr.iutvalence.automath.app.bridge.BasicAutomatonOperator;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
+import fr.iutvalence.automath.app.model.SimulationProvider;
 import fr.iutvalence.automath.app.view.utils.CellEditor;
 import fr.iutvalence.automath.app.view.frame.AboutFrame;
 import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
@@ -68,7 +69,7 @@ public abstract class GUIPanel extends JPanel {
 
 	protected boolean modified;
 
-	private mxRubberband rubberband;
+	private final mxRubberband rubberBand;
 
 	private mxKeyboardHandler keyboardHandler;
 	
@@ -88,7 +89,7 @@ public abstract class GUIPanel extends JPanel {
 
 	protected StateSelectorPanel stateSelectorPanel;
 
-	private UndoHandler undoHandler;
+	private final UndoHandler undoHandler;
 
 	protected boolean allowMinimisation;
 
@@ -103,7 +104,7 @@ public abstract class GUIPanel extends JPanel {
 		final mxGraph graph = graphComponent.getGraph();
 		initialiseOperationPermissions();
 		initialiseStatusBar();
-		this.rubberband = new mxRubberband(graphComponent);
+		this.rubberBand = new mxRubberband(graphComponent);
 		this.keyboardHandler = new GuiKeyboardHandler(graphComponent);
 		initializeTabbedMenu();
 		this.tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -156,7 +157,7 @@ public abstract class GUIPanel extends JPanel {
 	public abstract void initializeStateSelectorPanel(mxGraph graph);
 	
 	public GUIPanel(String mode) {
-		this(mxResources.get("AppName") + " (" + mode + ")", initializeComponent(new FiniteStateAutomatonGraph(new AutoMathBasicAutomatonProvider())));
+		this(mxResources.get("AppName") + " (" + mode + ")", initializeComponent(new FiniteStateAutomatonGraph(new BasicAutomatonOperator())));
 	}
 
 	private static mxGraphComponent initializeComponent(FiniteStateAutomatonGraph graph) {
@@ -224,7 +225,7 @@ public abstract class GUIPanel extends JPanel {
 	}
 
 	public void setRubberBandEnabled(boolean b) {
-		this.rubberband.setEnabled(b);
+		this.rubberBand.setEnabled(b);
 	}
 
 	public void displayMessage(String message,String title,int messageType) {
@@ -297,21 +298,27 @@ public abstract class GUIPanel extends JPanel {
 	}
 
 	protected void showGraphPopupMenu(MouseEvent e) {
+		if (! getGraphComponent().isEnabled()) {
+			return;
+		}
 		int x = e.getX();
 		int y = e.getY();
 		Object cell = graphComponent.getCellAt(x, y);
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), frame);
 
 		//Interaction menu on the chart with basic changes such as copy, paste etc.
-		PopUpMenu popUpMenu;
+		PopUpMenu popUpMenu = newPopupMenu();
 		if (cell != null) {
-			popUpMenu = new PopUpMenu(this, ((mxCell)cell), ((mxCell)cell).isVertex() ? TargetType.State : TargetType.Transition);
-			popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);
+			popUpMenu.init(this, ((mxCell)cell), ((mxCell)cell).isVertex() ? TargetType.State : TargetType.Transition);
 		} else {
-			popUpMenu = new PopUpMenu(this, null, TargetType.GraphComponent);
-			popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);
+			popUpMenu.init(this, null, TargetType.GraphComponent);
 		}
+		popUpMenu.show(SwingUtilities.windowForComponent(this),pt.x,pt.y);
 		e.consume();
+	}
+
+	protected PopUpMenu newPopupMenu() {
+		return new PopUpMenu();
 	}
 
 	public void setLookAndFeel(String clazz) {
@@ -349,8 +356,7 @@ public abstract class GUIPanel extends JPanel {
 					graph.getModel().beginUpdate();
 					try {
 						layout.execute(cell);
-						setAppStatusText(mxResources.get(key)+" : " + (System.currentTimeMillis() - t0)
-								+ " ms");
+						setAppStatusText(mxResources.get(key) + " : " + (System.currentTimeMillis() - t0) + " ms");
 					} finally {
 						graph.getModel().endUpdate();
 					}
@@ -459,7 +465,6 @@ public abstract class GUIPanel extends JPanel {
 			int y = frame.getY() + (frame.getHeight() - about.getHeight()) / 2;
 			about.setLocation(x, y);
 
-
 			about.setVisible(true);
 		}
 	}
@@ -515,7 +520,7 @@ public abstract class GUIPanel extends JPanel {
 		updateTitle();
 	}
 	
-	private JTabbedPane getTabbedPane() {
+	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
 	

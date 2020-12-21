@@ -11,19 +11,18 @@ import javax.swing.JTextField;
 
 import com.mxgraph.util.mxResources;
 
-import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.model.Header;
 
 public abstract class MultiTabbedMenu extends JTabbedPane {
 
 	private static final long serialVersionUID = 2169638062606931902L;
 	
-	protected MultiTabbedMenu(GUIPanel editor) {
+	protected MultiTabbedMenu() {
 		super();
-		init(editor);
+		init();
 	}
 	
-	private void init(GUIPanel editor) {
+	private void init() {
 		JPanel panel = new JPanel();
 		
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);

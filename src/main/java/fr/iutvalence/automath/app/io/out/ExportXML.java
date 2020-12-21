@@ -45,7 +45,7 @@ public class ExportXML implements Exporter {
      */
     private final Map<mxCell, Integer> allStates;
 
-    private FiniteStateAutomatonGraph automaton;
+    private final FiniteStateAutomatonGraph automaton;
 
     /**
      * A constructor of ExportXML, with the parameter graph, and that raises an exception
@@ -72,7 +72,7 @@ public class ExportXML implements Exporter {
      *
      * @param file The path to saving the file
      */
-    public void exportAutomate(String file) {
+    public void exportAutomaton(String file) {
         Element stateList = document.createElement("liste_etats");
         racine.appendChild(stateList);
         int i = 0;

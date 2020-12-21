@@ -9,7 +9,7 @@ public class JMenuItemWithHints extends JMenuItem {
 	private static final long serialVersionUID = 7363824302444226060L;
 	
 	   @Override 
-	   public void setAccelerator( KeyStroke keyStroke ) {
+	   public void setAccelerator(KeyStroke keyStroke) {
 		   //do nothing
 	   }
 	   
@@ -23,5 +23,4 @@ public class JMenuItemWithHints extends JMenuItem {
 		   super.setAccelerator(k);
 		   return this;
 	   }
-
 }

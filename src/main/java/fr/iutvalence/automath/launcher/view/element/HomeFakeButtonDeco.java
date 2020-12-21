@@ -8,17 +8,13 @@ import javax.swing.JButton;
  */
 public class HomeFakeButtonDeco extends JButton {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -2852772489885507092L;
 
 	/**
 	 * Build the fake button with its properties.
 	 * @param iconfilePath
 	 */
-	public HomeFakeButtonDeco(String iconfilePath){
-
+	public HomeFakeButtonDeco(String iconfilePath) {
 		setIcon(new ImageIcon(iconfilePath));
 		setBorder(BorderFactory.createEmptyBorder());
 		setContentAreaFilled(false);

@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
 
 import javax.swing.*;
 
@@ -23,50 +25,38 @@ import fr.iutvalence.automath.app.exceptions.WordIsEmptyException;
  * The graphical display of the graphical simulation that works with {@link SimulationProvider}
  */
 public class SimulationPanel extends JPanel {
-
-	/**
-	 *
-	 */
+	
 	private static final long serialVersionUID = 3671333670496340210L;
 
 	/**
 	 * The next action
 	 */
-	private ActionListener nextAction;
-	
-	/**
-	 * The final action
-	 */
-	private ActionListener endAction;
-	
+	private final ActionListener nextAction;
+
 	/**
 	 * The start action
 	 */
-	private ActionListener beginAction;
+	private final ActionListener beginAction;
 	
 	/**
 	 * The IHM with functionality
 	 */
-	private GUIPanel editor;
-	
-	/**
-	 * The last word in the simulation
-	 */
-	private ActionListener toTheEndAction;
+	private final GUIPanel editor;
+
 	/**
 	 * The algorithm that deals with the simulation of the automaton
 	 */
-	private SimulationProvider simulationProvider;
+	private final SimulationProvider simulationProvider;
 
 	/**
-	 * A constructor of SinulationPanel, with the parameter the IHM and a provider
+	 * A constructor of SimulationPanel, with the parameter the IHM and a provider
 	 * @param ep The IHM with functionality
-	 * @param simul The simulation of the automaton
+	 * @param simulation The simulation of the automaton
 	 */
-	public SimulationPanel(GUIPanel ep, SimulationProvider simul) {
-		this.simulationProvider = simul;
+	public SimulationPanel(GUIPanel ep, SimulationProvider simulation) {
+		this.simulationProvider = simulation;
 		//elements du panel Simulation
-		JTextFieldCustom word = new JTextFieldCustom(simul);  // Allocate JTextArea
+		JTextFieldCustom word = new JTextFieldCustom(simulation);  // Allocate JTextArea
 		JScrollPane tAreaScrollPane = new JScrollPane(word);  // Allocate JScrollPane which wraps the JTextArea
 		tAreaScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		word.setMargin(new Insets(3, 3, 3, 3));
@@ -87,12 +77,11 @@ public class SimulationPanel extends JPanel {
 		reset.setEnabled(false);
 		editor = ep;
 
-
 		nextAction = arg0 -> {
 			try {
-				SimulationState s = simul.next();
+				SimulationState s = simulation.next();
 				word.repaint();
-				if(s != SimulationState.RUNNING) {
+				if (s != SimulationState.RUNNING) {
 					start.setEnabled(false);
 					toTheEnd.setEnabled(false);
 				}
@@ -102,10 +91,10 @@ public class SimulationPanel extends JPanel {
 			}
 		};
 
-
 		beginAction = arg0 -> {
 			try {
-				simul.start(word.getText());
+				simulation.start(word.getText());
+				firePropertyChange("SimulationState", SimulationState.END, SimulationState.RUNNING);
 				editor.getUndoManager().setUndoAllowed(false);
 				ep.getGraphComponent().getGraph().clearSelection();
 				ep.getGraphComponent().setEnabled(false);
@@ -127,9 +116,13 @@ public class SimulationPanel extends JPanel {
 			}
 		};
 
-		endAction = arg0 -> {
+		/*
+		 * The final action
+		 */
+		ActionListener endAction = arg0 -> {
+			firePropertyChange("SimulationState", SimulationState.RUNNING, SimulationState.END);
 			ep.getGraphComponent().setEnabled(true);
-			simul.reset();
+			simulation.reset();
 			ep.setRubberBandEnabled(true);
 			start.setEnabled(true);
 			toTheEnd.setEnabled(true);
@@ -141,11 +134,14 @@ public class SimulationPanel extends JPanel {
 			start.removeActionListener(start.getActionListeners()[0]);
 			start.addActionListener(beginAction);
 			reset.setEnabled(false);
-	};
+		};
 
-		toTheEndAction = e -> {
+		/*
+		 * The last word in the simulation
+		 */
+		ActionListener toTheEndAction = e -> {
 			try {
-				displaySimulationMessage(simul.toTheEnd(word.getText()));
+				displaySimulationMessage(simulation.toTheEnd(word.getText()));
 				ep.getGraphComponent().getGraph().clearSelection();
 				ep.getGraphComponent().setEnabled(false);
 				ep.setRubberBandEnabled(false);
@@ -156,11 +152,11 @@ public class SimulationPanel extends JPanel {
 				toTheEnd.setEnabled(false);
 				reset.setEnabled(true);
 			} catch (WordIsEmptyException e1) {
-				editor.displayMessage(mxResources.get("ErrNoWordTip"),mxResources.get("Error")+mxResources.get("ErrNoWord"), JOptionPane.ERROR_MESSAGE);
+				editor.displayMessage(mxResources.get("ErrNoWordTip"), mxResources.get("Error") + mxResources.get("ErrNoWord"), JOptionPane.ERROR_MESSAGE);
 			} catch (GraphIsEmptyException e1) {
-				editor.displayMessage(mxResources.get("ErrEmptyAutomatonTip"),mxResources.get("Error")+mxResources.get("ErrEmptyAutomaton"), JOptionPane.ERROR_MESSAGE);
+				editor.displayMessage(mxResources.get("ErrEmptyAutomatonTip"), mxResources.get("Error") + mxResources.get("ErrEmptyAutomaton"), JOptionPane.ERROR_MESSAGE);
 			} catch (NoInitialStateException e1) {
-				editor.displayMessage(mxResources.get("ErrNoStartingTip"),mxResources.get("Error")+mxResources.get("ErrNoStarting"), JOptionPane.ERROR_MESSAGE);
+				editor.displayMessage(mxResources.get("ErrNoStartingTip"), mxResources.get("Error") + mxResources.get("ErrNoStarting"), JOptionPane.ERROR_MESSAGE);
 			}
 		};
 
@@ -184,16 +180,16 @@ public class SimulationPanel extends JPanel {
 
 		switch (s) {
 		case RUNNING:return;
-		case END: text = mxResources.get("SimultationEnd");
-				  title = mxResources.get("SimultationEndTitle");
+		case END: text = mxResources.get("SimulationEnd");
+				  title = mxResources.get("SimulationEndTitle");
 				  messageType = JOptionPane.PLAIN_MESSAGE;
 			break;
-		case NOSTATEFOUND: text = mxResources.get("SimultationStateNotFound");
-		                   title = mxResources.get("SimultationStateNotFoundTitle");
+		case NO_STATE_FOUND: text = mxResources.get("SimulationStateNotFound");
+		                   title = mxResources.get("SimulationStateNotFoundTitle");
 		                   messageType = JOptionPane.ERROR_MESSAGE;
 			break;
-		case ACCEPTED: text = mxResources.get("SimultationAccepted");
-		               title = mxResources.get("SimultationAcceptedTitle");
+		case ACCEPTED: text = mxResources.get("SimulationAccepted");
+		               title = mxResources.get("SimulationAcceptedTitle");
 		               messageType = JOptionPane.PLAIN_MESSAGE;
 			break;
 		default: text = "";
@@ -216,7 +212,7 @@ public class SimulationPanel extends JPanel {
 	/**
 	 * Redefinition of the class JTextArea with a cursor on the position of advancement in the word simulate
 	 */
-    static class JTextFieldCustom extends JTextArea{
+    static class JTextFieldCustom extends JTextArea {
 		/**
 		 *
 		 */
@@ -233,23 +229,23 @@ public class SimulationPanel extends JPanel {
 		/**
 		 * The algorithm that deals with the simulation of the automaton
 		 */
-		private SimulationProvider simul;
+		private final SimulationProvider simulation;
 
 		/**
 		 * A constructor of JTextFieldCustom, with the parameter the simulation
-		 * @param simul The simulation of the automaton
+		 * @param simulation The simulation of the automaton
 		 */
-		public JTextFieldCustom(SimulationProvider simul) {
+		public JTextFieldCustom(SimulationProvider simulation) {
 			super();
 			index = 0;
-			this.simul = simul;
+			this.simulation = simulation;
 		}
 
 		/**
 		 * update the current character 
 		 */
 		public void setCurrentChar() {
-			index = simul.getLoopNumber()-1;
+			index = simulation.getLoopNumber()-1;
 		}
 
 		/**
@@ -273,34 +269,34 @@ public class SimulationPanel extends JPanel {
 
 		     setCurrentChar();
 		     FontMetrics metrics = g.getFontMetrics();
-		     if(isSimulation) {
-		    	 int blanc = this.getMargin().left;
-		    	 int margeTop = this.getInsets().top+this.getMargin().top;
-		    	 int margeBottom = this.getMargin().bottom-1;
+		     if (isSimulation) {
+		    	 int blank = this.getMargin().left;
+		    	 int marginTop = this.getInsets().top + this.getMargin().top;
+		    	 int marginBottom = this.getMargin().bottom - 1;
 			     int sizeChar = sizeCurrentChar(metrics,super.getText());
-		    	 int marge = offsetCharCusor(metrics, super.getText());
+		    	 int margin = offsetCharCursor(metrics, super.getText());
 		    	 int topCursor = 1;
 			     Polygon p = new Polygon();
 
-			     if(simul.isStatePhase()) {
-				     p.addPoint(blanc+marge+sizeChar-3,topCursor);
-				     p.addPoint(blanc+marge+sizeChar+3,topCursor);
-				     p.addPoint(blanc+marge+sizeChar,margeTop);
-			     }
-			     else {
-				     p.addPoint(blanc+marge+(sizeChar/2)-3,topCursor);
-				     p.addPoint(blanc+marge+(sizeChar/2)+3,topCursor);
-				     p.addPoint(blanc+marge+(sizeChar/2),margeTop);
+			     if (simulation.isStatePhase()) {
+				     p.addPoint(blank + margin+sizeChar - 3,topCursor);
+				     p.addPoint(blank + margin+sizeChar + 3,topCursor);
+				     p.addPoint(blank + margin+sizeChar,marginTop);
+			     } else {
+				     p.addPoint(blank + margin + (sizeChar / 2) - 3,topCursor);
+				     p.addPoint(blank + margin + (sizeChar / 2) + 3,topCursor);
+				     p.addPoint(blank + margin + (sizeChar / 2),marginTop);
 			     }
 
 			     g.setColor(new Color( 189, 195, 199 ));
 			     g.fillPolygon(p);
 			     g.drawPolygon(p);
 			     g.setColor(Color.RED);
-			     if(simul.isStatePhase())
-			    	 g.drawRect(blanc+marge+sizeChar, margeTop, 0, metrics.getAscent()-margeBottom);
-			     else
-			    	 g.drawRect(blanc+marge,margeTop, sizeChar, metrics.getAscent()-margeBottom);
+			     if (simulation.isStatePhase()) {
+					 g.drawRect(blank + margin + sizeChar, marginTop, 0, metrics.getAscent() - marginBottom);
+				 } else {
+					 g.drawRect(blank + margin,marginTop, sizeChar, metrics.getAscent() - marginBottom);
+				 }
 		     }
 		}
 
@@ -310,11 +306,13 @@ public class SimulationPanel extends JPanel {
 		 * @param text The word
 		 * @return The size in pixel
 		 */
-		private int offsetCharCusor(FontMetrics metrics, String text){
-			if(index >= text.length())
-				return metrics.stringWidth(new StringBuffer(text).substring(0, index-1));
-			if(index == -1)
+		private int offsetCharCursor(FontMetrics metrics, String text) {
+			if (index >= text.length()) {
+				return metrics.stringWidth(new StringBuffer(text).substring(0, index - 1));
+			}
+			if (index == -1) {
 				return metrics.stringWidth(new StringBuffer(text).substring(0, 0));
+			}
 			return metrics.stringWidth(new StringBuffer(text).substring(0, index));
 		}
 
@@ -324,12 +322,14 @@ public class SimulationPanel extends JPanel {
 		 * @param text The word
 		 * @return The size in pixel
 		 */
-		private int sizeCurrentChar(FontMetrics metrics, String text){
-			if(index == -1)
-				return metrics.stringWidth(new StringBuffer(text).substring(0, index+1));
-			else if (index+1 > text.length())
-				return metrics.stringWidth(new StringBuffer(text).substring(index-1, index));
-			return metrics.stringWidth(new StringBuffer(text).substring(index, index+1));
+		private int sizeCurrentChar(FontMetrics metrics, String text) {
+			if (index == -1) {
+				return metrics.stringWidth(new StringBuffer(text).substring(0, 0));
+			} else if (index + 1 > text.length()) {
+				return metrics.stringWidth(new StringBuffer(text).substring(index - 1, index));
+			} else {
+				return metrics.stringWidth(new StringBuffer(text).substring(index, index + 1));
+			}
 		}
 	}
 }

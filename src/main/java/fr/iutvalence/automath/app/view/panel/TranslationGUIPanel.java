@@ -1,10 +1,5 @@
 package fr.iutvalence.automath.app.view.panel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
-
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphOutline;
@@ -12,7 +7,11 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
-import fr.iutvalence.automath.app.view.panel.GUIPanel;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 
 public abstract class TranslationGUIPanel extends GUIPanel {
 
@@ -64,7 +63,7 @@ public abstract class TranslationGUIPanel extends GUIPanel {
 			graph.getModel().beginUpdate();
 		});
 	
-		/* Not necessary, used to prevend multiple edges from one state to another
+		/* Not necessary, used to prevent multiple edges from one state to another
 		graph.addListener(mxEvent.CELL_CONNECTED, new mxIEventListener() {
 			@Override
 			public void invoke(Object sender, mxEventObject evt) {
@@ -130,6 +129,5 @@ public abstract class TranslationGUIPanel extends GUIPanel {
 				}
 			});
 	}
-
 }
 

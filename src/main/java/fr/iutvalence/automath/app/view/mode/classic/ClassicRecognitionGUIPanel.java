@@ -20,7 +20,7 @@ public class ClassicRecognitionGUIPanel extends RecognitionGUIPanel {
 	
 	@Override
 	public void initializeStateSelectorPanel(mxGraph graph) {
-		this.stateSelectorPanel = new RecognitionStateSelectorPanel(graph);
+		this.stateSelectorPanel = new RecognitionStateSelectorPanel();
 	}
 	
 }

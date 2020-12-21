@@ -33,10 +33,10 @@ public class TransitionInfo implements CellInfo {
 	@Override
 	public String toString() {
 		if(destination == null || source == null) return "";
-		String src = source.getLabel().length()==0?CellInfo.NO_NAME:source.getLabel();
-		String dest = destination.getLabel().length()==0?CellInfo.NO_NAME:destination.getLabel();
+		String src = source.getLabel().length() == 0 ? CellInfo.NO_NAME : source.getLabel();
+		String dest = destination.getLabel().length() == 0 ? CellInfo.NO_NAME : destination.getLabel();
 
-		return "Transition "+(label.length()==0?CellInfo.NO_NAME:label)+"\n ["+src+"->"+dest+"]";
+		return "Transition " + (label.length() == 0 ? CellInfo.NO_NAME : label) + "\n [" + src + "->" + dest + "]";
 	}
 
 	@Override

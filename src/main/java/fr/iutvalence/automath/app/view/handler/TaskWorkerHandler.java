@@ -3,11 +3,11 @@ package fr.iutvalence.automath.app.view.handler;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Manager responsible for spawning new worker units for each job. 
+ * Manager responsible for spawning new workers for each job.
  */ 
 public class TaskWorkerHandler extends Thread{
 	
-	private AtomicBoolean run = new AtomicBoolean(true);
+	private final AtomicBoolean run = new AtomicBoolean(true);
 
     private Runnable runnable;
 

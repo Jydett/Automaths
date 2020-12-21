@@ -13,20 +13,11 @@ import java.awt.event.ActionEvent;
 import java.util.EventObject;
 
 public class CellEditor implements mxICellEditor {
-	/**
-	 *
-	 */
 	private static final String CANCEL_EDITING = "cancel-editing";
 
-	private final JTextField feild;
-	/**
-	 *
-	 */
-	protected int minimumWidth = mxCellEditor.DEFAULT_MIN_WIDTH;
+	private final JTextField field;
 
-	/**
-	 *
-	 */
+	protected int minimumWidth = mxCellEditor.DEFAULT_MIN_WIDTH;
 	protected int minimumHeight = mxCellEditor.DEFAULT_MIN_HEIGHT;
 	/**
 	 * Defines the minimum scale to be used for the editor. Set this to
@@ -34,29 +25,14 @@ public class CellEditor implements mxICellEditor {
 	 */
 	protected double minimumEditorScale = mxCellEditor.DEFAULT_MINIMUM_EDITOR_SCALE;
 
-	/**
-	 *
-	 */
 	private static final String SUBMIT_TEXT = "submit-text";
 	private final mxGraphComponent graphComponent;
-	/**
-	 *
-	 */
 	transient Object textEnterActionMapKey;
 
-	/**
-	 *
-	 */
 	transient KeyStroke escapeKeystroke = KeyStroke.getKeyStroke("ESCAPE");
 
-	/**
-	 *
-	 */
 	transient KeyStroke enterKeystroke = KeyStroke.getKeyStroke("ENTER");
 
-	/**
-	 *
-	 */
 	protected AbstractAction cancelEditingAction = new AbstractAction()
 	{
 		public void actionPerformed(ActionEvent e)
@@ -65,13 +41,7 @@ public class CellEditor implements mxICellEditor {
 		}
 	};
 	private Object editingCell;
-	/**
-	 *
-	 */
 	protected transient EventObject trigger;
-	/**
-	 *
-	 */
 	protected AbstractAction textSubmitAction = new AbstractAction()
 	{
 		public void actionPerformed(ActionEvent e)
@@ -82,14 +52,14 @@ public class CellEditor implements mxICellEditor {
 
 	public CellEditor(mxGraphComponent graphComponent) {
 		this.graphComponent = graphComponent;
-		feild = new JTextField();
-		feild.setOpaque(false);
-		feild.setHorizontalAlignment(JTextField.CENTER);
-		feild.setBorder(BorderFactory.createEmptyBorder());
-		feild.getActionMap().put(CANCEL_EDITING, cancelEditingAction);
-		feild.getActionMap().put(SUBMIT_TEXT, textSubmitAction);
+		field = new JTextField();
+		field.setOpaque(false);
+		field.setHorizontalAlignment(JTextField.CENTER);
+		field.setBorder(BorderFactory.createEmptyBorder());
+		field.getActionMap().put(CANCEL_EDITING, cancelEditingAction);
+		field.getActionMap().put(SUBMIT_TEXT, textSubmitAction);
 
-		textEnterActionMapKey = feild.getInputMap().get(enterKeystroke);
+		textEnterActionMapKey = field.getInputMap().get(enterKeystroke);
 	}
 
 	@Override
@@ -112,27 +82,25 @@ public class CellEditor implements mxICellEditor {
 			double scale = Math.max(minimumEditorScale, graphComponent
 					.getGraph().getView().getScale());
 
-			feild.setBounds(getEditorBounds(state, scale));
-			feild.setVisible(true);
+			field.setBounds(getEditorBounds(state, scale));
+			field.setVisible(true);
 			String value = getInitialValue(state, evt);
 
-			feild.setText(value);
-			graphComponent.getGraphControl().add(feild, 0);
+			field.setText(value);
+			graphComponent.getGraphControl().add(field, 0);
 
-			if (isHideLabel(state)) {
-				graphComponent.redraw(state);
-			}
+			graphComponent.redraw(state);
 
-			feild.revalidate();
-			feild.requestFocusInWindow();
-			feild.selectAll();
+			field.revalidate();
+			field.requestFocusInWindow();
+			field.selectAll();
 
 			configureActionMaps();
 		}
 	}
 
 	protected void configureActionMaps() {
-		InputMap textInputMap = feild.getInputMap();
+		InputMap textInputMap = field.getInputMap();
 
 		// Adds handling for the escape key to cancel editing
 		textInputMap.put(escapeKeystroke, cancelEditingAction);
@@ -140,21 +108,16 @@ public class CellEditor implements mxICellEditor {
 		// Adds handling for shift-enter and redirects enter to stop editing
 		if (graphComponent.isEnterStopsCellEditing()) {
 			//textInputMap.put(shiftEnterKeystroke, textEnterActionMapKey);
-
 			textInputMap.put(enterKeystroke, SUBMIT_TEXT);
 		} else {
 			textInputMap.put(enterKeystroke, textEnterActionMapKey);
 		}
 	}
 
-	protected boolean isHideLabel(mxCellState state) {
-		return true;
-	}
-
 	@Override
 	public void stopEditing(boolean cancel) {
 		if (editingCell != null) {
-			feild.transferFocusUpCycle();
+			field.transferFocusUpCycle();
 			Object cell = editingCell;
 			editingCell = null;
 
@@ -167,9 +130,9 @@ public class CellEditor implements mxICellEditor {
 						.getState(cell);
 				graphComponent.redraw(state);
 			}
-			feild.setVisible(false);
-			if (feild.getParent() != null) {
-				feild.getParent().remove(feild);
+			field.setVisible(false);
+			if (field.getParent() != null) {
+				field.getParent().remove(field);
 			}
 
 			graphComponent.requestFocusInWindow();
@@ -180,7 +143,7 @@ public class CellEditor implements mxICellEditor {
 	 * Returns the current editing value.
 	 */
 	public String getCurrentValue() {
-		return feild.getText();
+		return field.getText();
 	}
 
 	/**
@@ -219,8 +182,7 @@ public class CellEditor implements mxICellEditor {
 	 * Returns true if the label bounds of the state should be used for the
 	 * editor.
 	 */
-	protected boolean useLabelBounds(mxCellState state)
-	{
+	protected boolean useLabelBounds(mxCellState state) {
 		mxIGraphModel model = state.getView().getGraph().getModel();
 		mxGeometry geometry = model.getGeometry(state.getCell());
 

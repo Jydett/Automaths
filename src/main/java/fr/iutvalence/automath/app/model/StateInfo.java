@@ -61,7 +61,11 @@ public class StateInfo implements CellInfo {
 	 */
 	@Override
 	public String toString() {
-		return mxResources.get("State")+" "+(label.length()==0?CellInfo.NO_NAME:label)+((accepting | starting)?" :":"")+" \n    "+(accepting ?mxResources.get("Accepting")+"\n    ":"")+(starting ?mxResources.get("Starting")+"\n    ":"");
+		return mxResources.get("State") + " " +
+				(label.length() == 0 ? CellInfo.NO_NAME : label) +
+				((accepting | starting) ? " :" : "" ) +
+				" \n    " + (accepting ? mxResources.get("Accepting") + "\n    " : "") +
+				(starting ? mxResources.get("Starting") + "\n    " : "");
 	}
 
 

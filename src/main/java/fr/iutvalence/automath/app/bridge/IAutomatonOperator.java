@@ -7,7 +7,7 @@ import com.mxgraph.model.mxCell;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.Transition;
 
-public interface InterfaceAutomaton {
+public interface IAutomatonOperator {
 
 	/**
 	 * Minimise the graph (see <a href="https://en.wikipedia.org/wiki/DFA_minimization">Wikipedia</a>) given as a sets of <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.model.mxCell}</a>

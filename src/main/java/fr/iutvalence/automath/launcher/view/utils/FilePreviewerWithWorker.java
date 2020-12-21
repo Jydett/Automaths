@@ -1,6 +1,6 @@
 package fr.iutvalence.automath.launcher.view.utils;
 
-import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
+import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
 import fr.iutvalence.automath.app.io.in.XMLGraphRenderer;
 import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
 
@@ -33,17 +33,17 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	/**
 	 * A task manager to request the dynamic creation of the image
 	 */
-	private TaskWorkerHandler taskThread;
+	private final TaskWorkerHandler taskThread;
 	/**
 	 * The JFileChooser with contains the redefinition
 	 */
-	private JFileChooser fc;
+	private final JFileChooser fc;
 	/**
 	 * An interface to manipulate the automaton
 	 */
-	private InterfaceAutomaton automaton;
+	private final IAutomatonOperator automaton;
 
-	public FilePreviewerWithWorker(JFileChooser fc, InterfaceAutomaton automaton) {
+	public FilePreviewerWithWorker(JFileChooser fc, IAutomatonOperator automaton) {
 		setPreferredSize(new Dimension(200,200));
 		fc.addPropertyChangeListener(this);
 		this.fc = fc;
@@ -80,7 +80,7 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	/**
 	 * To regenerate the image
 	 */
-	public synchronized void refrechImage(){
+	public synchronized void refreshImage(){
 		if(image == null) return;
 		image = new ImageIcon(image.getImage().getScaledInstance((getWidth()-10), -1, Image.SCALE_SMOOTH));
 		image = new ImageIcon(image.getImage().getScaledInstance(-1, (getHeight()-10), Image.SCALE_SMOOTH));

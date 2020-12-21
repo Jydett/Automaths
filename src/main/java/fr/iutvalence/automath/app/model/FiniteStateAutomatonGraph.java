@@ -17,8 +17,8 @@ import com.mxgraph.view.mxStylesheet;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
-import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
-import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
+import fr.iutvalence.automath.app.bridge.OperableGraph;
+import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
 import fr.iutvalence.automath.app.view.shape.BeginEndingStateShape;
 import fr.iutvalence.automath.app.view.shape.BeginStateShape;
 
@@ -44,7 +44,7 @@ import java.util.Set;
  * 
  * This graph can be minimised and determinized.
  */
-public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoMathBasicGraph {
+public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph {
 
 	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1;" + mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_CENTER;
 	public static final String STYLE_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
@@ -110,11 +110,11 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 	}
 	
 	/**
-	 * The automato//TODO
+	 * Delegate class to do complexes operations on the graph
 	 */
-	private InterfaceAutomaton automaton;
+	private final IAutomatonOperator automaton;
 
-	public FiniteStateAutomatonGraph(InterfaceAutomaton automaton) {
+	public FiniteStateAutomatonGraph(IAutomatonOperator automaton) {
 		super();
 		this.automaton = automaton;
 		registerTextShape();
@@ -164,7 +164,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 					int w = rect.width;
 					int h = rect.height;
 					if (!horizontal) {
-						g.rotate(-1.5707963267948966D, (double)(x + w / 2), (double)(y + h / 2));
+						g.rotate(-1.5707963267948966D, x + ((double) w / 2), y + ((double)h / 2));
 						g.translate(w / 2 - h / 2, h / 2 - w / 2);
 					}
 
@@ -304,7 +304,6 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 			super.cellLabelChanged(cell, ((mxCell) cell).getValue(), false);
 		}
 	}
-
 	
 	public void deleteAllElements() {
 		removeCells(getChildVertices(getDefaultParent()));
@@ -358,7 +357,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		int i = 0;
 		for (State currentStateOfAutomate : listOfState) {
 			String style;
-			if(currentStateOfAutomate.isAccept() && currentStateOfAutomate.isInitial()) {
+			if (currentStateOfAutomate.isAccept() && currentStateOfAutomate.isInitial()) {
 				style = FiniteStateAutomatonGraph.STYLE_FINAL_BEGIN_STATE;
 			} else if (currentStateOfAutomate.isAccept()) {
 				style = FiniteStateAutomatonGraph.STYLE_FINAL_STATE;
@@ -390,7 +389,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		getModel().endUpdate();
 	}
 
-	public InterfaceAutomaton getAutomaton() {
+	public IAutomatonOperator getAutomaton() {
 		return automaton;
 	}
 

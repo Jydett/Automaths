@@ -2,7 +2,7 @@ package fr.iutvalence.automath.app.io.in;
 
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.util.mxCellRenderer;
-import fr.iutvalence.automath.app.bridge.InterfaceAutomaton;
+import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
 import fr.iutvalence.automath.app.io.in.helper.XMLHelper;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
@@ -37,19 +37,19 @@ public class XMLGraphRenderer implements Runnable {
     /**
      * The graphic object that we want to send the constructed image
      */
-    private final FilePreviewerWithWorker jfileChooser;
+    private final FilePreviewerWithWorker fileChooser;
 
     /**
      * A constructor of ExportPDF, with the parameter path of the file, the JFileChooser redefine and the Automate Interface
      *
      * @param path         The path to saving the file
-     * @param jfileChooser The file chooser with preview
+     * @param fileChooser The file chooser with preview
      * @param automate     An interface to manipulate the automaton
      */
-    public XMLGraphRenderer(String path, FilePreviewerWithWorker jfileChooser, InterfaceAutomaton automate) {
+    public XMLGraphRenderer(String path, FilePreviewerWithWorker fileChooser, IAutomatonOperator automate) {
         this.graph = new FiniteStateAutomatonGraph(automate);
         this.path = path;
-        this.jfileChooser = jfileChooser;
+        this.fileChooser = fileChooser;
     }
 
     /**
@@ -80,6 +80,6 @@ public class XMLGraphRenderer implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.jfileChooser.loadImage(buf, path);
+        this.fileChooser.loadImage(buf, path);
     }
 }

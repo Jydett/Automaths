@@ -15,8 +15,8 @@ public class CellDescriptorPane extends JPanel {
 
 	private static final long serialVersionUID = 2100710623417222423L;
 	private mxICell cell;
-	private JTextArea textArea;
-	//private JCheckBox accetingCheckBox;
+	private final JTextArea textArea;
+	//private JCheckBox acceptingCheckBox;
 	/**
 	 * Build the description's cell with font, ...
 	 */
@@ -29,8 +29,9 @@ public class CellDescriptorPane extends JPanel {
 		textArea.setEditable(false);
 		textArea.setWrapStyleWord(true);
 		add(textArea, BorderLayout.CENTER);
-		/*accetingCheckBox = new JCheckBox();
-		accetingCheckBox.addActionListener(e -> {
+		/*
+		acceptingCheckBox = new JCheckBox();
+		acceptingCheckBox.addActionListener(e -> {
 			if(cell != null) {
 				((StateInfo) cell.getValue()).setAccepting(((AbstractButton) e.getSource()).getModel().isSelected());
 				((StateInfo) cell.getValue()).refresh(cell);
@@ -39,7 +40,8 @@ public class CellDescriptorPane extends JPanel {
 				graph.repaint();
 			}
 		});
-		add(accetingCheckBox, BorderLayout.NORTH);*/
+		add(acceptingCheckBox, BorderLayout.NORTH);
+		*/
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class CellDescriptorPane extends JPanel {
 		String cellData = cell.getValue().toString();
 		if (((CellInfo) cell.getValue()).isValid()) {		
 			textArea.setText(cellData);
-			//accetingCheckBox.setSelected(((StateInfo) cell.getValue()).isAccepting);
+			//acceptingCheckBox.setSelected(((StateInfo) cell.getValue()).isAccepting);
 		}
 	}
 	/**
@@ -57,12 +59,12 @@ public class CellDescriptorPane extends JPanel {
 	 */
 	public void clear() {
 		textArea.setText("");
-		//accetingCheckBox.setEnabled(false);
+		//acceptingCheckBox.setEnabled(false);
 	}
 
 	public void setCell(mxICell cell) {
 		this.cell = cell;
 		this.refresh();
-		//accetingCheckBox.setEnabled(true);
+		//acceptingCheckBox.setEnabled(true);
 	}
 }

@@ -8,24 +8,21 @@ import java.awt.event.*;
 /**
  * Create round button for Home page 
  */
-public class HomeButton extends JButton{
-	/**
-	 * 
-	 */
+public class HomeButton extends JButton {
 	private static final long serialVersionUID = 8660109775944301911L;
 	/** To know if the mouse has been over, false default */
 	private boolean mouseOver = false;
 	/** To know if the mouse has been pressed, false default */
 	private boolean mousePressed = false;
 	/** The color of the button */
-	private Color hisColor;
+	private final Color hisColor;
 	/**
 	 * Button builder with 2 args to personalize button
 	 * Set a font 
 	 * @param text
 	 * @param color
 	 */
-	public HomeButton(String text, Color color){
+	public HomeButton(String text, Color color) {
 		super(text); 
 		this.hisColor = color;
 		Font aFont = new Font("Arial",Font.BOLD,20);
@@ -34,34 +31,31 @@ public class HomeButton extends JButton{
 		setFocusPainted(false);
 		setBorderPainted(false);
 		setBackground(color);
-		/**
-		 * Create a mouse listenner to know user's choices (clicks on buttons)
-		 */
-		MouseAdapter mouseListener = new MouseAdapter(){
-			
+		//Create a mouse listener to know user's choices (clicks on buttons)
+		MouseAdapter mouseListener = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me){
-				if(contains(me.getX(), me.getY())){
+				if (contains(me.getX(), me.getY())) {
 					mousePressed = true;
 					repaint();
 				}
 			}
 			
 			@Override
-			public void mouseReleased(MouseEvent me){
+			public void mouseReleased(MouseEvent me) {
 				mousePressed = false;
 				repaint();
 			}
 			
 			@Override
-			public void mouseExited(MouseEvent me){
+			public void mouseExited(MouseEvent me) {
 				mouseOver = false;
 				mousePressed = false;
 				repaint();
 			}
 			
 			@Override
-			public void mouseMoved(MouseEvent me){
+			public void mouseMoved(MouseEvent me) {
 				mouseOver = contains(me.getX(), me.getY());
 				repaint();
 			}	
@@ -92,7 +86,7 @@ public class HomeButton extends JButton{
 	 * @return Point2D.distance
 	 */
 	@Override
-	public boolean contains(int x, int y){
+	public boolean contains(int x, int y) {
 		int radius = getDiameter()/2;
 		return Point2D.distance(x, y, getWidth()/2, getHeight()/2) < radius;
 	}
@@ -104,7 +98,7 @@ public class HomeButton extends JButton{
 	 * @param g
 	 */
 	@Override
-	public void paintComponent(Graphics g){
+	public void paintComponent(Graphics g) {
 		int diameter = getDiameter();
 		int radius = diameter/2;
 		g.setColor(hisColor);

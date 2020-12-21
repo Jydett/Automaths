@@ -16,7 +16,7 @@ public class Header {
 	/**
 	 * The enumeration of workable modes:
 	 * <ul>
-	 * <li>Examen, for users who use the application during exams</li>
+	 * <li>Exam, for users who use the application during exams</li>
 	 * <li>Classic, for users who uses the application with all the features</li>
 	 * </ul>
 	 */
@@ -24,7 +24,7 @@ public class Header {
 		/**
 		 * State of the application used during review with functionality in less
 		 */
-		EXAMEN,
+		EXAM,
 		/**
 		 * State of the application used outside the exam with all the features
 		 */
@@ -70,11 +70,11 @@ public class Header {
 	}
 
 	/**
-	 * A constructor of ExportPDF, with the parameter the mode chosen by the user when launching the application 
-	 * @param mod
+	 * A constructor of ExportPDF, with the parameter the mode chosen by the user when launching the application
+	 * @param mode the current mode
 	 */
-	private Header(UserProfile mod){
-		this.modCode = mod;
+	private Header(UserProfile mode){
+		this.modCode = mode;
 	}
 
 	/**

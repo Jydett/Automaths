@@ -1,7 +1,7 @@
 package fr.iutvalence.automath.app.view.utils;
 
 /**
- * Class to store forgotten missing grid constants from mxConstants
+ * Class to store missing grid constants from mxConstants
  */
 public final class GridConstants {
     public final static int GRID_STYLE_CROSS = 0;

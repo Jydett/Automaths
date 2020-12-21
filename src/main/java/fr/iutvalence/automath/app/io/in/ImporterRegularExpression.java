@@ -1,6 +1,6 @@
 package fr.iutvalence.automath.app.io.in;
 
-import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
+import fr.iutvalence.automath.app.bridge.OperableGraph;
 import fr.iutvalence.automath.app.editor.EditorActions;
 
 import javax.swing.text.JTextComponent;
@@ -14,19 +14,19 @@ public class ImporterRegularExpression implements Importer {
 	/**
 	 * The graph of the application 
 	 */
-	private InterfaceAutoMathBasicGraph graph;
+	private final OperableGraph graph;
 
 	/**
 	 * The text area containing the regular expression
 	 */
-	private JTextComponent internalText;
+	private final JTextComponent internalText;
 
 	/**
 	 * A constructor of ImporterRegularExpression, with the parameter graph and the text area
 	 * @param graph The graph of application
 	 * @param internalText The text area used by user
 	 */
-	public ImporterRegularExpression(InterfaceAutoMathBasicGraph graph, JTextComponent internalText){
+	public ImporterRegularExpression(OperableGraph graph, JTextComponent internalText){
 		this.graph = graph;
 		this.internalText = internalText;
 	}

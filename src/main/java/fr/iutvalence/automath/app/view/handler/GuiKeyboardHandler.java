@@ -18,8 +18,7 @@ import fr.iutvalence.automath.app.editor.EditorActions;
  */
 public class GuiKeyboardHandler extends mxKeyboardHandler {
 
-	public GuiKeyboardHandler(mxGraphComponent graphComponent)
-	{
+	public GuiKeyboardHandler(mxGraphComponent graphComponent) {
 		super(graphComponent);
 	}
 
@@ -33,7 +32,7 @@ public class GuiKeyboardHandler extends mxKeyboardHandler {
 			map.put(KeyStroke.getKeyStroke("control shift S"), "saveAs");
 			map.put(KeyStroke.getKeyStroke("control N"), "new");
 			map.put(KeyStroke.getKeyStroke("control O"), "open");
-			map.put(KeyStroke.getKeyStroke("control shift O"), "opentemplate");
+			map.put(KeyStroke.getKeyStroke("control shift O"), "openTemplate");
 			map.put(KeyStroke.getKeyStroke("control Z"), "undo");
 			map.put(KeyStroke.getKeyStroke("control Y"), "redo");
 			map.put(KeyStroke.getKeyStroke("control shift V"), "selectVertices");
@@ -52,7 +51,7 @@ public class GuiKeyboardHandler extends mxKeyboardHandler {
 			map.put("saveAs", new EditorActions.SaveAction(true));
 			map.put("new", new EditorActions.NewAction());
 			map.put("open", new EditorActions.OpenActionWithPreviewer());
-			map.put("opentemplate", new EditorActions.OpenTemplate());
+			map.put("openTemplate", new EditorActions.OpenTemplate());
 		} else {
 			map.put("save", new EditorActions.SaveExamAction(false));
 			map.put("saveAs", new EditorActions.SaveExamAction(true));	

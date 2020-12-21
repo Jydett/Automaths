@@ -1,7 +1,7 @@
 package fr.iutvalence.automath.app.view.mode.classic;
 
 import com.mxgraph.util.mxResources;
-import fr.iutvalence.automath.app.bridge.InterfaceAutoMathBasicGraph;
+import fr.iutvalence.automath.app.bridge.OperableGraph;
 import fr.iutvalence.automath.app.editor.EditorActions;
 import fr.iutvalence.automath.app.io.in.ImporterRegularExpression;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
@@ -24,15 +24,27 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 	private final AtomicBoolean generating = new AtomicBoolean(false);
 
 	public ClassicRecognitionMultiTabbedMenu(GUIPanel editor) {
-		super(editor);
+		super();
 		
 		JPanel expressionPanel = new JPanel();
 		JPanel processingPanel = new JPanel();
 		JPanel simulationPanel = new SimulationPanel(editor, new SimulationProvider(editor));
 
+		simulationPanel.addPropertyChangeListener("SimulationState", (e) -> {
+			if (e.getNewValue() != SimulationProvider.SimulationState.END) {
+				setEnabledAt(0, false);
+				setEnabledAt(1, false);
+				setEnabledAt(2, false);
+			} else {
+				setEnabledAt(0, true);
+				setEnabledAt(1, true);
+				setEnabledAt(2, true);
+			}
+		});
+
 		expressionText = new JTextField();
 		expressionText.setColumns(15);
-		importerExpression = new ImporterRegularExpression(((InterfaceAutoMathBasicGraph)editor.getGraphComponent().getGraph()), expressionText);
+		importerExpression = new ImporterRegularExpression(((OperableGraph)editor.getGraphComponent().getGraph()), expressionText);
 		
 		JButton expressionButton = new JButton(mxResources.get("ImportRegex"));
 		expressionButton.setIcon(new ImageIcon(ClassicRecognitionMultiTabbedMenu.class.getResource("/img/icon/inlayGear.gif")));

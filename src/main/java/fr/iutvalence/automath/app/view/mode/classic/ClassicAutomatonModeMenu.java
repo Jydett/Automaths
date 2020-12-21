@@ -19,5 +19,4 @@ public class ClassicAutomatonModeMenu extends AutomatonModeMenu {
 		GUIPanel editorPanel = new ClassicTranslationGUIPanel();
 		editorPanel.createFrame(new ClassicMenuBar(editorPanel)).setVisible(true);
 	}
-
 }

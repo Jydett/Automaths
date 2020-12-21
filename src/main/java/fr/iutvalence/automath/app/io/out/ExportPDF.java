@@ -13,7 +13,6 @@ import com.mxpdf.text.DocumentException;
 import com.mxpdf.text.Rectangle;
 import com.mxpdf.text.pdf.PdfContentByte;
 import com.mxpdf.text.pdf.PdfWriter;
-import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.model.Header;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 
@@ -50,7 +49,7 @@ public class ExportPDF implements Exporter {
 	 * Convert the graph to PDF and save the result to an (.pdf) file with the specified path in parameter
 	 * @param file The path to saving the file
 	 */
-	public void exportAutomate(String file) {
+	public void exportAutomaton(String file) {
 		mxGraph graph = guiPanel.getGraphComponent().getGraph();
 		mxRectangle bounds = graph.getGraphBounds();
 		graph.getModel().beginUpdate();

@@ -6,8 +6,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxIGraphModel;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 
-
-public interface InterfaceAutoMathBasicGraph {
+public interface OperableGraph {
 
 	void deleteAllElements();
 
@@ -24,7 +23,7 @@ public interface InterfaceAutoMathBasicGraph {
 	/**
 	 * insert transition in the graph
 	 * @param c The label of the transition
-	 * @param source The soucre of the transition
+	 * @param source The source of the transition
 	 * @param target The target of the transition
 	 * @return The object implemented by <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.model.mxICell}</a>
 	 */

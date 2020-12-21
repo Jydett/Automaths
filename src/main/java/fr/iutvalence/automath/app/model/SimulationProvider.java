@@ -8,6 +8,7 @@ import fr.iutvalence.automath.app.exceptions.NextCallOnNonStartedSimulationExcep
 import fr.iutvalence.automath.app.exceptions.NoInitialStateException;
 import fr.iutvalence.automath.app.exceptions.WordIsEmptyException;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class SimulationProvider {
 	/**
 	 * The graph of the application
 	 */
-	private mxGraph graph;
+	private final mxGraph graph;
 
 	/**
 	 * Number of loop made in the simulation
@@ -58,11 +59,11 @@ public class SimulationProvider {
 	/**
 	 * List of red colored states
 	 */
-	private ArrayList <mxCell> red = new ArrayList <>();
+	private final ArrayList<mxCell> red = new ArrayList<>();
 	/**
 	 * List of green colored states
 	 */
-	private ArrayList <mxCell> green = new ArrayList <>();
+	private final ArrayList<mxCell> green = new ArrayList<>();
 	
 	/**
 	 * A constructor of SimulationProvider, with the parameter graph
@@ -88,7 +89,7 @@ public class SimulationProvider {
 	 * @return The instance of the object
 	 * @throws WordIsEmptyException if the word provide in empty
 	 * @throws GraphIsEmptyException if the graph is empty
-	 * @throws NoInitialStateException if the graph dosen't have any initial state
+	 * @throws NoInitialStateException if the graph doesn't have any initial state
 	 */
 	public SimulationState toTheEnd(String word)throws WordIsEmptyException, GraphIsEmptyException, NoInitialStateException{
 		if (!isStarted) {
@@ -111,10 +112,10 @@ public class SimulationProvider {
 	 * @param word The word has tested
 	 * @throws WordIsEmptyException if the word provide in empty
 	 * @throws GraphIsEmptyException if the graph is empty
-	 * @throws NoInitialStateException if the graph dosen't have any initial state
+	 * @throws NoInitialStateException if the graph doesn't have any initial state
 	 */
 	public void start(String word) throws WordIsEmptyException, GraphIsEmptyException, NoInitialStateException {
-		if(word.isEmpty()) {
+		if (word.isEmpty()) {
 			throw new WordIsEmptyException();
 		}
 		lastStates = new ArrayList<>();
@@ -148,13 +149,13 @@ public class SimulationProvider {
 	 * @return The instance of the object
 	 * @throws NextCallOnNonStartedSimulationException if this method is called when the simulation isn't started
 	 */
-	public SimulationState next() throws NextCallOnNonStartedSimulationException {//BUG  si word = nostatfound ou END ou reconnu
+	public SimulationState next() throws NextCallOnNonStartedSimulationException {//FIXME BUG  si word = no_state_found ou END ou reconnu
 	    if (loopNumber > word.length()) {
 	        return SimulationState.END;
 	    }
 		boolean exist = false;
 		SimulationState res = SimulationState.RUNNING;
-	    ArrayList < mxCell > futurStates = new ArrayList <>();
+	    ArrayList<mxCell> futureStates = new ArrayList<>();
 	    if (loopNumber < word.length()) {
 	        if (!isStarted) throw new NextCallOnNonStartedSimulationException();
 	        resetColor(lastStates.toArray());
@@ -169,7 +170,7 @@ public class SimulationProvider {
 		                        TransitionInfo ti = (TransitionInfo) e.getValue();
 								final String label = ti.getLabel();
 								if (label.indexOf(c) != -1 || label.equals("*")) {
-		                            futurStates.add(e);
+		                            futureStates.add(e);
 		                            exist = true;
 		                        }
 		                    }
@@ -177,13 +178,13 @@ public class SimulationProvider {
 		            }
 	            }
 	            if (! exist) {
-	            	return SimulationState.NOSTATEFOUND;
+	            	return SimulationState.NO_STATE_FOUND;
 				}
 	            loopNumber++;
 	        } else {
 	            for (mxCell cell: lastStates) {
 	                if (cell.isEdge()) {
-	                    futurStates.add((mxCell) cell.getTarget());
+	                    futureStates.add((mxCell) cell.getTarget());
 	                }
 	            }
 	        }
@@ -191,10 +192,10 @@ public class SimulationProvider {
 	        resetColor(lastStates.toArray());
 	    	for (mxCell cell : lastStates) {
                 if (cell.isEdge()) {
-                    futurStates.add((mxCell) cell.getTarget());
+                    futureStates.add((mxCell) cell.getTarget());
                 }
             }
-	    	for (mxCell finale : futurStates) {
+	    	for (mxCell finale : futureStates) {
 	    		lastStates.clear();
 	    		StateInfo si = (StateInfo) finale.getValue();
 	    		if (si.isAccepting()) {
@@ -212,7 +213,7 @@ public class SimulationProvider {
 	    	}
 	    	loopNumber++;
 	    }
-		Set<mxCell> set = new HashSet<>(futurStates);
+		Set<mxCell> set = new HashSet<>(futureStates);
 	    lastStates.clear();
 	    lastStates.addAll(set);
 	    color(lastStates.toArray(),"red");
@@ -272,12 +273,12 @@ public class SimulationProvider {
 	 * <ul>
 	 * <li>RUNNING : the simulation is RUNNING</li>
 	 * <li>ACCEPTED : the automaton is recognized</li>
-	 * <li>NOSTATEFOUND : the automaton is not recognized</li>
+	 * <li>NO_STATE_FOUND : the automaton is not recognized</li>
 	 * <li>END : the simulation is finish</li>
 	 * </ul>
 	 */
 	public enum SimulationState {
-		RUNNING, ACCEPTED, NOSTATEFOUND, END
+		RUNNING, ACCEPTED, NO_STATE_FOUND, END
 	}
 	
 }

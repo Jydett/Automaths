@@ -1,7 +1,6 @@
 package fr.iutvalence.automath.app.view.menu;
 
 import com.mxgraph.util.mxResources;
-import fr.iutvalence.automath.app.view.menu.Menu;
 
 public abstract class AutomatonModeMenu extends Menu {
 

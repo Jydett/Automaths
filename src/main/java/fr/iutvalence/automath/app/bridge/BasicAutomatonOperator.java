@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * AutoMathBasicAutomatonProvider is the class that contains algorithmic actions on the automaton
+ * BasicAutomatonOperator is the class that contains algorithmic actions on the automaton
  */
-public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
+public class BasicAutomatonOperator implements IAutomatonOperator {
 
 	@Override
 	public Automaton minimize(Set<mxCell> state,Set<mxCell> transitions) {
@@ -155,7 +155,7 @@ public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
 					System.out.println(toString());
 				}
 	    	}
-			Set<Character> char_rest = containeChar(language, lang);
+			Set<Character> char_rest = containsChar(language, lang);
     		for (char c : char_rest) {
 				state.addTransition(new Transition(c, well));
 			}
@@ -165,12 +165,12 @@ public class AutoMathBasicAutomatonProvider implements InterfaceAutomaton {
 		}
 	}
 
-	private Set<Character> containeChar(String language, Set<Character> liste_char){
+	private Set<Character> containsChar(String language, Set<Character> charSet){
 		Set<Character> rest = new HashSet<>();
 		for (Character c : language.toCharArray()) {
 			rest.add(c);
 		}
-		for (Character c : liste_char){
+		for (Character c : charSet){
 			rest.remove(c);
 		}
 		return rest;

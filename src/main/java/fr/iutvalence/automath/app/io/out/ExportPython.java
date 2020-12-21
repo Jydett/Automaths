@@ -48,7 +48,7 @@ public class ExportPython implements Exporter {
 	 * Convert the graph to python script and save the result to an (.py) file with the specified path in parameter
 	 * @param file The path to saving the file
 	 */
-	public void exportAutomate(String file) {
+	public void exportAutomaton(String file) {
 		if (file.equals("cancel")) {
 			return;
 		}
@@ -104,7 +104,7 @@ public class ExportPython implements Exporter {
 				if (list_of_transition.length() != 1) {
 					list_of_transition.append(",");
 				}
-				list_of_transition.append("(")
+				list_of_transition.append("(")//TODO check ca ?
 					.append(stateMap.get(source))
 					.append(",'")
 					.append(aTransitionValue)

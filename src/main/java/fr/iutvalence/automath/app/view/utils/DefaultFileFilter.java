@@ -18,8 +18,7 @@ import javax.swing.filechooser.FileFilter;
 /**
  * Filter for use in a {@link JFileChooser}.
  */
-public class DefaultFileFilter extends FileFilter
-{
+public class DefaultFileFilter extends FileFilter {
 
 	/**
 	 * Extension of ACCEPTED files.
@@ -32,15 +31,14 @@ public class DefaultFileFilter extends FileFilter
 	protected String desc;
 
 	/**
-	 * Constructs a new filter for the specified extension and descpription.
+	 * Constructs a new filter for the specified extension and description.
 	 * 
 	 * @param extension
 	 *            The extension to accept files with.
 	 * @param description
 	 *            The description of the file format.
 	 */
-	public DefaultFileFilter(String extension, String description)
-	{
+	public DefaultFileFilter(String extension, String description) {
 		ext = extension.toLowerCase();
 		desc = description;
 	}
@@ -94,8 +92,7 @@ public class DefaultFileFilter extends FileFilter
 	 * 
 	 * @see ImageIO#getReaderFormatNames()
 	 */
-	public static class ImageFileFilter extends FileFilter
-	{
+	public static class ImageFileFilter extends FileFilter {
 
 		/**
 		 * Holds the ACCEPTED file format extensions for images.
@@ -161,8 +158,7 @@ public class DefaultFileFilter extends FileFilter
 	 * 
 	 * @see ImageIO#getReaderFormatNames()
 	 */
-	public static class EditorFileFilter extends FileFilter
-	{
+	public static class EditorFileFilter extends FileFilter {
 
 		/**
 		 * Description of the File format
@@ -186,10 +182,8 @@ public class DefaultFileFilter extends FileFilter
 		 * 
 		 * @return Returns true if the file is ACCEPTED.
 		 */
-		public boolean accept(File file)
-		{
-			if (file.isDirectory())
-			{
+		public boolean accept(File file) {
+			if (file.isDirectory()) {
 				return true;
 			}
 
@@ -207,6 +201,5 @@ public class DefaultFileFilter extends FileFilter
 		{
 			return desc;
 		}
-
 	}
 }
