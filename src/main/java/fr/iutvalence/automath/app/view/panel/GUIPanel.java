@@ -19,10 +19,7 @@ import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxICellEditor;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxRectangle;
-import com.mxgraph.util.mxResources;
+import com.mxgraph.util.*;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
@@ -34,6 +31,7 @@ import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
 import fr.iutvalence.automath.app.view.handler.UndoHandler;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu.TargetType;
+import fr.iutvalence.automath.app.view.utils.GridConstants;
 import fr.iutvalence.automath.app.view.utils.RotationVertexHandler;
 
 import javax.swing.AbstractAction;
@@ -185,6 +183,7 @@ public abstract class GUIPanel extends JPanel {
 		gc.setEnterStopsCellEditing(true);
 		gc.setGridVisible(false);
 		gc.setToolTips(true);
+		gc.setGridStyle(GridConstants.GRID_STYLE_SQUARES);
 		gc.getViewport().setBackground(new Color(247,247,247));
 		gc.getConnectionHandler().setCreateTarget(false);
 		return gc;

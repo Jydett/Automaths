@@ -4,20 +4,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionEvent;
 
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
-import javax.swing.ButtonGroup;
-import javax.swing.UIManager;
-import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
+import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.swing.util.mxGraphActions;
 
+import com.mxgraph.view.mxGraph;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.view.utils.JMenuItemWithHints;
 import fr.iutvalence.automath.app.editor.EditorActions.*;
@@ -55,7 +48,20 @@ public abstract class MenuBar extends JMenuBar {
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectAll"), mxGraphActions.getSelectAllAction(), "/img/icon/select.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)));
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectNone"), mxGraphActions.getSelectNoneAction(), "/img/icon/deselectAll.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)));
 
-		menu = add(new JMenu(mxResources.get("Layout")));
+		menu = add(new JMenu(mxResources.get("View")));
+		JCheckBoxMenuItem toggleGridItem = new JCheckBoxMenuItem();
+		toggleGridItem.setAction(new AbstractAction(mxResources.get("EnableGrid")) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mxGraphComponent graphComponent = editor.getGraphComponent();
+				mxGraph graph = graphComponent.getGraph();
+				graph.setGridEnabled(! graph.isGridEnabled());
+				toggleGridItem.setState(graph.isGridEnabled());
+				graphComponent.setGridVisible(graph.isGridEnabled());
+				graphComponent.repaint();
+			}
+		});
+		menu.add(toggleGridItem);
 		menu.add(editor.bind(mxResources.get("organicLayout"), new OrganicAction(), "/img/icon/organic.gif"));
 		menu.add(editor.bind(mxResources.get("circleLayout"), new CircularAction(), "/img/icon/circular.gif"));
 

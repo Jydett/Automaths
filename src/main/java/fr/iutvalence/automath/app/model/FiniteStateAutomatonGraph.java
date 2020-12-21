@@ -128,6 +128,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements InterfaceAutoM
 		super.setCellsResizable(false);
 		super.setResetEdgesOnConnect(false);
 		super.setMultigraph(true);
+		super.setGridSize(25);
 
 		mxStylesheet edgeStyle = new mxStylesheet();
 		Map<String, Object> edge = new HashMap<>();
