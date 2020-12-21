@@ -6,7 +6,7 @@
 
     <groupId>fr.iutvalence</groupId>
     <artifactId>automaths</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,11 +33,9 @@
             <version>4.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.jgraph</groupId>
+            <groupId>com.jgraph</groupId>
             <artifactId>mxPDF</artifactId>
             <version>1.0.2</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/mxPdf.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -48,15 +46,11 @@
             <groupId>dk.brics</groupId>
             <artifactId>automaton</artifactId>
             <version>1.12-1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/dk.brics.automaton.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.julianthome</groupId>
             <artifactId>autorex</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/autorex-1.0-SNAPSHOT-shaded.jar</systemPath>
         </dependency>
     </dependencies>
 
