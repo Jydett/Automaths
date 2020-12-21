@@ -20,7 +20,7 @@ public class UndoHandler extends mxUndoManager {
 	 * aka the number of undo you can perform in a raw
 	 */
 	private final static int HISTORY_SIZE = 20;
-	private List<mxUndoableEdit> historySave;
+	private final List<mxUndoableEdit> historySave;
 	private int indexOfNextAddSave;
 	private int sizeSave;
 

@@ -785,7 +785,7 @@ public class EditorActions {
 				try {
 					String ext = filename.substring(filename.lastIndexOf('.') + 1);
 					if (ext.equalsIgnoreCase("pdf")) {
-						new ExportPDF((FiniteStateAutomatonGraph) (editor.getGraphComponent().getGraph())).exportAutomate(filename);
+						new ExportPDF(editor).exportAutomate(filename);
 					}
 					editor.setModified(false);
 					editor.setCurrentFile(new File(filename));
@@ -987,7 +987,7 @@ public class EditorActions {
 						importToPython.exportAutomate(filename);
 					}
 					else if (ext.equalsIgnoreCase("pdf")) {
-						new ExportPDF((FiniteStateAutomatonGraph) (editor.getGraphComponent().getGraph())).exportAutomate(filename);
+						new ExportPDF(editor).exportAutomate(filename);
 					}
 					else if (ext.equalsIgnoreCase("xml")) {
 						try {

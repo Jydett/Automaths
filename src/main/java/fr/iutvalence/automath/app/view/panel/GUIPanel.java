@@ -28,7 +28,7 @@ import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import fr.iutvalence.automath.app.bridge.AutoMathBasicAutomatonProvider;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
-import fr.iutvalence.automath.app.view.CellEditor;
+import fr.iutvalence.automath.app.view.utils.CellEditor;
 import fr.iutvalence.automath.app.view.frame.AboutFrame;
 import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
 import fr.iutvalence.automath.app.view.handler.UndoHandler;

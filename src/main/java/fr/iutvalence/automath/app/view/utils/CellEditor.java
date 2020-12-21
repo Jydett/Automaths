@@ -1,4 +1,4 @@
-package fr.iutvalence.automath.app.view;
+package fr.iutvalence.automath.app.view.utils;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxIGraphModel;
