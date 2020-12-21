@@ -149,7 +149,7 @@ public class SimulationProvider {
 	 * @return The instance of the object
 	 * @throws NextCallOnNonStartedSimulationException if this method is called when the simulation isn't started
 	 */
-	public SimulationState next() throws NextCallOnNonStartedSimulationException {//FIXME BUG  si word = no_state_found ou END ou reconnu
+	public SimulationState next() throws NextCallOnNonStartedSimulationException {
 	    if (loopNumber > word.length()) {
 	        return SimulationState.END;
 	    }

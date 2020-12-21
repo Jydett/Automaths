@@ -42,7 +42,43 @@ public class BasicAutomatonOperator implements IAutomatonOperator {
 	public String getRegex(Set<mxCell> state, Set<mxCell> transitions) {
 		Automaton automate = getAutomate(state, transitions);
 
-		return Autorex.getRegexFromAutomaton(automate).replace("(.{0})","").replace(".{0}","").replace("\\&", "");
+		String dirtyRegex = Autorex.getRegexFromAutomaton(automate);
+		return clean(dirtyRegex);
+	}
+
+	private String clean(String dirtyRegex) {
+		String lastRegex;
+		String newRegex = dirtyRegex;
+
+		do {
+			lastRegex = newRegex;
+			newRegex = newRegex.replace(".{0}", "")
+					.replace("\\&", "")
+					.replace("|)", ")")
+					.replaceAll("\\(([^)])\\)", "$1")
+					.replaceAll("\\(\\(([^)]*)\\)\\)", "($1)")
+					.replace("()", "");
+			if (newRegex.charAt(newRegex.length() - 1) == '|') {
+				newRegex = newRegex.substring(0, newRegex.length() - 1);
+			}
+			if (newRegex.length() > 2 && newRegex.charAt(0) == '(' && newRegex.charAt(newRegex.length() - 1) == ')') {
+				int lvl = 1;
+				char[] charArray = newRegex.toCharArray();
+				for (int i = 1; i < charArray.length - 1; i++) {
+					char c = charArray[i];
+					if (c == ')') {
+						lvl--;
+						if (lvl == 0) break;
+					} else if (c == '(') {
+						lvl++;
+					}
+				}
+				if (lvl == 1) {
+					newRegex = newRegex.substring(1, newRegex.length() - 1);
+				}
+			}
+		} while (! lastRegex.equals(newRegex));
+		return newRegex;
 	}
 
 	public Automaton generateAutomateWithExpReg(String text){

@@ -43,7 +43,7 @@ public class ClassicRecognitionMultiTabbedMenu extends MultiTabbedMenu {
 		});
 
 		expressionText = new JTextField();
-		expressionText.setColumns(15);
+		expressionText.setColumns(50);
 		importerExpression = new ImporterRegularExpression(((OperableGraph)editor.getGraphComponent().getGraph()), expressionText);
 		
 		JButton expressionButton = new JButton(mxResources.get("ImportRegex"));
