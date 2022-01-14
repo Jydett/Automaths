@@ -34,6 +34,7 @@ import fr.iutvalence.automath.app.view.menu.PopUpMenu;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu.TargetType;
 import fr.iutvalence.automath.app.view.utils.GridConstants;
 import fr.iutvalence.automath.app.view.utils.RotationVertexHandler;
+import lombok.Getter;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -58,27 +59,32 @@ import java.io.File;
 import java.util.List;
 
 public abstract class GUIPanel extends JPanel {
-	
+
 	private static final long serialVersionUID = -8393951230686521192L;
 
+	@Getter
 	protected mxGraphComponent graphComponent;
 
 	protected JLabel positionBar;
 
+	@Getter
 	protected File currentFile;
 
 	protected boolean modified;
 
 	private final mxRubberband rubberBand;
 
-	private mxKeyboardHandler keyboardHandler;
-	
+	@Getter
+	private final GuiKeyboardHandler keyboardHandler;
+
+	@Getter
 	protected JTabbedPane tabbedPane;
 
 	private JFrame frame;
 
 	protected String appTitle;
 
+	@Getter
 	protected CellDescriptorPane cellDescriptorPanel;
 
 	private JPanel statusBar;
@@ -96,7 +102,7 @@ public abstract class GUIPanel extends JPanel {
 	protected boolean allowDeterminisation;
 
 	public mxGraphLayout defaultParallelEdgeLayout;
-	
+
 	public GUIPanel(String appTitle, mxGraphComponent component) {
 		super();
 		this.appTitle = appTitle;
@@ -105,10 +111,10 @@ public abstract class GUIPanel extends JPanel {
 		initialiseOperationPermissions();
 		initialiseStatusBar();
 		this.rubberBand = new mxRubberband(graphComponent);
-		this.keyboardHandler = new GuiKeyboardHandler(graphComponent);
+		keyboardHandler = new GuiKeyboardHandler();
+		reloadKeyBinding();
 		initializeTabbedMenu();
 		this.tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		//this.stateSelectorPanel = new StateSelectorPanel(graph);
 		initializeStateSelectorPanel(graph);
 		this.cellDescriptorPanel = new CellDescriptorPane(graph);
 		initialiseUserActionPanel();
@@ -130,7 +136,7 @@ public abstract class GUIPanel extends JPanel {
 		this.userActionPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,stateSelectorPanel,cellDescriptorPanel);
 		this.userActionPanel.setResizeWeight(0);
 		this.userActionPanel.setDividerSize(2);
-		this.userActionPanel.setBorder(null);	
+		this.userActionPanel.setBorder(null);
 	}
 
 	private void constructEditor() {
@@ -153,9 +159,9 @@ public abstract class GUIPanel extends JPanel {
 	}
 
 	public abstract void initializeTabbedMenu();
-	
+
 	public abstract void initializeStateSelectorPanel(mxGraph graph);
-	
+
 	public GUIPanel(String mode) {
 		this(mxResources.get("AppName") + " (" + mode + ")", initializeComponent(new FiniteStateAutomatonGraph(new BasicAutomatonOperator())));
 	}
@@ -211,7 +217,7 @@ public abstract class GUIPanel extends JPanel {
 		frame.getContentPane().add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setJMenuBar(menuBar);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		try {
 			frame.setIconImage(new ImageIcon(GUIPanel.class.getResource("/img/icon/logo.png")).getImage());
 		} catch(Exception e) {
@@ -330,11 +336,15 @@ public abstract class GUIPanel extends JPanel {
 				SwingUtilities.updateComponentTreeUI(frame);
 
 				// Needs to assign the key bindings again
-				keyboardHandler = new mxKeyboardHandler(graphComponent);
+				reloadKeyBinding();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	public void reloadKeyBinding() {
+		keyboardHandler.reload(graphComponent);
 	}
 
 	@SuppressWarnings("serial")
@@ -348,11 +358,11 @@ public abstract class GUIPanel extends JPanel {
 					eraseAllGeometryPoint();
 					final mxGraph graph = graphComponent.getGraph();
 					Object cell = graph.getSelectionCell();
-					
+
 					if (cell == null || graph.getModel().getChildCount(cell) == 0) {
 						cell = graph.getDefaultParent();
 					}
-					
+
 					graph.getModel().beginUpdate();
 					try {
 						layout.execute(cell);
@@ -449,7 +459,7 @@ public abstract class GUIPanel extends JPanel {
 		}
 		return layout;
 	}
-	
+
 	public void about() {
 		JFrame frame = (JFrame) SwingUtilities.windowForComponent(this);
 
@@ -491,39 +501,23 @@ public abstract class GUIPanel extends JPanel {
 		}
 	}
 
-	public CellDescriptorPane getCellDescriptorPanel() {
-		return cellDescriptorPanel;
-	}
-	
-	public mxGraphComponent getGraphComponent() {
-		return this.graphComponent;
-	}
-	
 	public void setAppStatusText(String newStatus) {
 		this.appStatus.setText(newStatus);
 	}
-	
+
 	public boolean getAllowMinimisation() {
 		return this.allowMinimisation;
 	}
-	
+
 	public boolean getAllowDeterminisation() {
 		return this.allowDeterminisation;
-	}
-
-	public File getCurrentFile() {
-		return this.currentFile;
 	}
 
 	public void setCurrentFile(File file) {
 		this.currentFile = file;
 		updateTitle();
 	}
-	
-	public JTabbedPane getTabbedPane() {
-		return tabbedPane;
-	}
-	
+
 	public boolean isUnmodified() {
 		return ! this.modified;
 	}

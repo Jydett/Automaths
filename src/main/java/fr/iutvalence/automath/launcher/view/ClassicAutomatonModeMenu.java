@@ -1,11 +1,9 @@
 package fr.iutvalence.automath.launcher.view;
 
-import fr.iutvalence.automath.app.view.mode.classic.ClassicTranslationGUIPanel;
-import fr.iutvalence.automath.launcher.view.AutomatonModeMenu;
 import fr.iutvalence.automath.app.view.menu.ClassicMenuBar;
-import fr.iutvalence.automath.app.view.mode.exam.ExamRecognitionGUIPanel;
+import fr.iutvalence.automath.app.view.mode.classic.ClassicRecognitionGUIPanel;
+import fr.iutvalence.automath.app.view.mode.classic.ClassicTranslationGUIPanel;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
-import fr.iutvalence.automath.launcher.view.Menu;
 
 public class ClassicAutomatonModeMenu extends AutomatonModeMenu {
 
@@ -15,7 +13,7 @@ public class ClassicAutomatonModeMenu extends AutomatonModeMenu {
 
 	@Override
 	public void onLeftButtonClicked() {
-		openGui(new ExamRecognitionGUIPanel());
+		openGui(new ClassicRecognitionGUIPanel());
 	}
 
 	@Override

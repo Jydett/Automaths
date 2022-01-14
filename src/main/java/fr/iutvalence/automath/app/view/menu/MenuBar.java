@@ -1,38 +1,36 @@
 package fr.iutvalence.automath.app.view.menu;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ActionEvent;
-
-import javax.swing.*;
-
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxResources;
 import com.mxgraph.swing.util.mxGraphActions;
-
+import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
+import fr.iutvalence.automath.app.editor.EditorActions.*;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.view.utils.JMenuItemWithHints;
-import fr.iutvalence.automath.app.editor.EditorActions.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 public abstract class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 8727734888101745133L;
-	
+
 	protected final GUIPanel editor;
-	
+
 	protected MenuBar(GUIPanel editor) {
 		this.editor = editor;
 		init();
 	}
-	
+
 	private void init() {
 		JMenu menu = add(new JMenu(mxResources.get("File")));
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("New"), new NewAction(), "/img/icon/new.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)));
 		addItemsToFile(menu);
 		menu.addSeparator();
 		menu.add(editor.bind(mxResources.get("Exit"), new ExitAction(), "/img/icon/exit.gif"));
-		
+
 		menu = add(new JMenu(mxResources.get("Edit")));
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Undo"), new HistoryAction(true), "/img/icon/undo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK)));
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("Redo"), new HistoryAction(false), "/img/icon/redo.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK)));
@@ -83,7 +81,7 @@ public abstract class MenuBar extends JMenuBar {
 				currentMenu.setSelected(true);
 			}
 		}
-			
+
 		menu = add(new JMenu(mxResources.get("Help")));
 		JMenuItem aboutButton = new JMenuItem(mxResources.get("OpenAboutFrame"));
 		aboutButton.setIcon(new ImageIcon(MenuBar.class.getResource("/img/icon/about.png")));
@@ -92,7 +90,7 @@ public abstract class MenuBar extends JMenuBar {
 		JMenuItem helpButton = new JMenuItem(editor.bind(mxResources.get("OpenHelpFrame"), new OpenHelpAction(), "/img/icon/help.png"));
 		menu.add(helpButton);
 	}
-	
+
 	protected abstract void addItemsToFile(JMenu menu);
-	
+
 }

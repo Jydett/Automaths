@@ -53,8 +53,8 @@ public class Menu {
 		horizontalBox.add(verticalBox);
 		verticalBox.add(layeredPane);
 
-		rightButton = addButton("", Color.GRAY, null, 70, 148, 300, 300);
-		leftButton = addButton("", Color.LIGHT_GRAY, null, 314, 137, 500, 200);
+		leftButton = addButton("", Color.GRAY, null, 70, 148, 300, 300);
+		rightButton = addButton("", Color.LIGHT_GRAY, null, 314, 137, 500, 200);
 
 		JButton btnHelp = new JButton();
 		btnHelp.setBorder(BorderFactory.createEmptyBorder());

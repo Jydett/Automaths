@@ -17,11 +17,11 @@ public class UserModeMenu implements IMenuListener {
 
 	@Override
 	public void onLeftButtonClicked() {
-		new ExamAutomatonModeMenu(menu);
+		new ClassicAutomatonModeMenu(menu);
 	}
 
 	@Override
 	public void onRightButtonClicked() {
-		new ClassicAutomatonModeMenu(menu);
+		new ExamAutomatonModeMenu(menu);
 	}
 }
