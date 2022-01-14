@@ -1,4 +1,4 @@
-package fr.iutvalence.automath.app.view.mode.translation;
+package fr.iutvalence.automath.app.view.menu;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxResources;

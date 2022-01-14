@@ -6,7 +6,7 @@ import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
 import fr.iutvalence.automath.app.io.in.helper.XMLHelper;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
-import fr.iutvalence.automath.launcher.view.utils.FilePreviewerWithWorker;
+import fr.iutvalence.automath.app.view.utils.FilePreviewerWithWorker;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

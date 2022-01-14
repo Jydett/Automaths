@@ -27,7 +27,7 @@ import fr.iutvalence.automath.app.model.StateInfo;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 import fr.iutvalence.automath.app.view.utils.DefaultFileFilter;
-import fr.iutvalence.automath.launcher.view.utils.FilePreviewerWithWorker;
+import fr.iutvalence.automath.app.view.utils.FilePreviewerWithWorker;
 import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * Store of all sort of action doable from the editor
  */
 public final class EditorActions {
-	
+
 	/**
 	 * To retrieve the graphic panel from an event
 	 * @param e An action
@@ -77,7 +77,7 @@ public final class EditorActions {
 	public static class SetInitialAction extends JCheckBoxMenuItem {
 		public SetInitialAction(String name) {
 			super(name);
-			
+
 			addActionListener(e -> {
 				GUIPanel editor = getEditor(e);
 				FiniteStateAutomatonGraph graph =  (FiniteStateAutomatonGraph) editor.getGraphComponent().getGraph();
@@ -229,7 +229,7 @@ public final class EditorActions {
 	    public MinimizeAction(String name) {
 			super(name);
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
@@ -245,7 +245,7 @@ public final class EditorActions {
 			}
 			editor.setAppStatusText(mxResources.get("Minimization") + " : " + (System.currentTimeMillis() - t0) + "ms");
 		}
-		
+
 	}
 
 	/**
@@ -257,7 +257,7 @@ public final class EditorActions {
 	    public DeterminizeAction(String name) {
 			super(name);
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
@@ -273,11 +273,11 @@ public final class EditorActions {
 			}
 			editor.setAppStatusText(mxResources.get("Determinization") + " : " + (System.currentTimeMillis() - t0) + "ms");
 		}
-		
+
 	}
 
 	/**
-	 * The action open a template 
+	 * The action open a template
 	 */
 	@SuppressWarnings("serial")
 	public static class OpenTemplate extends AbstractAction {
@@ -327,14 +327,14 @@ public final class EditorActions {
 			} else {
 				// Replaces file extension with .mxe
 				String filename = file.getName();
-				filename = filename.substring(0, filename.length() - 4) + ".mxe";	
+				filename = filename.substring(0, filename.length() - 4) + ".mxe";
 				((mxGraphModel) graph.getModel()).clear();
 				mxGdCodec.decode(gdText, graph);
 				editor.getGraphComponent().zoomAndCenter();
 				editor.setCurrentFile(new File(lastDir + "/" + filename));
 			}
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
@@ -351,10 +351,10 @@ public final class EditorActions {
 					} catch (ParserConfigurationException e1) {
 						e1.printStackTrace();
 					}
-					
+
 					DefaultFileFilter defaultFilter = new DefaultFileFilter(".xml",
 							"XML  " + mxResources.get("Defaultformat") + " (.xml)");
-					
+
 					fc.addChoosableFileFilter(defaultFilter);
 
 					fc.addChoosableFileFilter(new DefaultFileFilter(".mxe",
@@ -373,7 +373,7 @@ public final class EditorActions {
 					fc.addChoosableFileFilter(new DefaultFileFilter(".txt",
 							"Graph Drawing  " + mxResources.get("File")
 									+ " (.txt)"));
-					
+
 
 					fc.setFileFilter(defaultFilter);
 
@@ -468,7 +468,7 @@ public final class EditorActions {
 
 		protected void openGD(GUIPanel editor, File file, String gdText) {
 			mxGraph graph = editor.getGraphComponent().getGraph();
-			
+
 			if (file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
 				try {
 					String filename = file.getName();
@@ -484,20 +484,20 @@ public final class EditorActions {
 				// Replaces file extension with .mxe
 				String filename = file.getName();
 				filename = filename.substring(0, filename.length() - 4) + ".mxe";
-	
+
 				if (new File(filename).exists()
 						&& JOptionPane.showConfirmDialog(editor,
 								mxResources.get("overwriteExistingFile")) != JOptionPane.YES_OPTION) {
 					return;
 				}
-	
+
 				((mxGraphModel) graph.getModel()).clear();
 				mxGdCodec.decode(gdText, graph);
 				editor.getGraphComponent().zoomAndCenter();
 				editor.setCurrentFile(new File(lastDir + "/" + filename));
 			}
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
@@ -520,10 +520,10 @@ public final class EditorActions {
 						} catch (ParserConfigurationException e1) {
 							e1.printStackTrace();
 						}
-						
+
 						DefaultFileFilter defaultFilter = new DefaultFileFilter(".xml",
 								"XML  " + mxResources.get("Defaultformat") + " (.xml)");
-						
+
 						fc.addChoosableFileFilter(defaultFilter);
 
 						fc.addChoosableFileFilter(new DefaultFileFilter(".mxe",
@@ -542,7 +542,7 @@ public final class EditorActions {
 						fc.addChoosableFileFilter(new DefaultFileFilter(".txt",
 								"Graph Drawing  " + mxResources.get("File")
 										+ " (.txt)"));
-						
+
 
 						fc.setFileFilter(defaultFilter);
 
@@ -638,7 +638,7 @@ public final class EditorActions {
 					fc.setDialogTitle(mxResources.get("SaveAs"));
 					// Adds the default file format
 					fc.addChoosableFileFilter(xmlPngFilter);
-					
+
 					fc.addChoosableFileFilter(new DefaultFileFilter(".pdf",
 							"PDF " + mxResources.get("File")
 									+ " (.pdf)"));
@@ -667,7 +667,7 @@ public final class EditorActions {
 					fc.addChoosableFileFilter(new DefaultFileFilter.ImageFileFilter(
 							mxResources.get("allImages")));
 					fc.setFileFilter(xmlPngFilter);
-					
+
 					int rc = fc.showSaveDialog(editor);
 
 					if (rc != JFileChooser.APPROVE_OPTION) {
@@ -788,7 +788,7 @@ public final class EditorActions {
 					fc.setDialogTitle(mxResources.get("SaveAs"));
 					// Adds the default file format
 					fc.addChoosableFileFilter(xmlPngFilter);
-					
+
 					fc.addChoosableFileFilter(new DefaultFileFilter(".py",
 							"Python " + mxResources.get("File")
 									+ " (.py)"));
@@ -835,7 +835,7 @@ public final class EditorActions {
 					fc.addChoosableFileFilter(new DefaultFileFilter.ImageFileFilter(
 							mxResources.get("allImages")));
 					fc.setFileFilter(xmlPngFilter);
-					
+
 					int rc = fc.showSaveDialog(editor);
 
 					if (rc != JFileChooser.APPROVE_OPTION) {
@@ -898,9 +898,9 @@ public final class EditorActions {
 						} catch (ParserConfigurationException e1) {
 							e1.printStackTrace();
 						}
-						
+
 						importerXML.exportAutomaton(filename);
-						
+
 						editor.setModified(false);
 						editor.setCurrentFile(new File(filename));
 					} else if (ext.equalsIgnoreCase("mxe")) {
@@ -954,7 +954,7 @@ public final class EditorActions {
 			editor.getUndoManager().clear();
 			editor.getGraphComponent().zoomAndCenter();
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GUIPanel editor = getEditor(e);
@@ -966,14 +966,14 @@ public final class EditorActions {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static class OrganicAction extends AbstractAction {
-		
+
 	    public OrganicAction() {
 			super(mxResources.get("organicLayout"));
 		}
-	    
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			long temps = System.currentTimeMillis();

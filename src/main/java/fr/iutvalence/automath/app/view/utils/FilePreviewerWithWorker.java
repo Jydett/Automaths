@@ -1,4 +1,4 @@
-package fr.iutvalence.automath.launcher.view.utils;
+package fr.iutvalence.automath.app.view.utils;
 
 import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
 import fr.iutvalence.automath.app.io.in.XMLGraphRenderer;
