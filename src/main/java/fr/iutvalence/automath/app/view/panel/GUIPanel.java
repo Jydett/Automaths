@@ -269,14 +269,18 @@ public abstract class GUIPanel extends JPanel {
 		double scale = graphComponent.getGraph().getView().getScale();
 
 		if (e.getWheelRotation() < 0) {
-			if(scale < 5)
+			if (scale < 5)
 				graphComponent.zoomIn();
 		} else {
 			graphComponent.zoomOut();
 		}
+		zoomUpdate(scale);
+	}
+
+	public void zoomUpdate(double scale) {
 		setAppStatusText(mxResources.get("Scale") + " : "
-				+ (int) (100 * scale)
-				+ "%");
+			+ (int) (100 * scale)
+			+ "%");
 	}
 
 	public abstract void installListeners();

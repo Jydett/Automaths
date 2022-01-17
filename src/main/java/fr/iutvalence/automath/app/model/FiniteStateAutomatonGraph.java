@@ -156,7 +156,6 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		
 		registerListeners();
 		new mxParallelEdgeLayout(this).execute(this.getDefaultParent());
-
 	}
 
 	private void registerTextShape() {

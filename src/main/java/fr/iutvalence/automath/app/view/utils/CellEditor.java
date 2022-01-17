@@ -5,12 +5,19 @@ import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxCellEditor;
 import com.mxgraph.swing.view.mxICellEditor;
+import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.EventObject;
+import java.util.Map;
 
 public class CellEditor implements mxICellEditor {
 	private static final String CANCEL_EDITING = "cancel-editing";
@@ -76,6 +83,9 @@ public class CellEditor implements mxICellEditor {
 
 		mxCellState state = graphComponent.getGraph().getView().getState(cell);
 		if (state != null) {
+			Map<String, Object> style = state.getStyle();
+			Font scaledFont = mxUtils.getFont(style, graphComponent.getGraph().getView().getScale());
+			field.setFont(scaledFont);
 			editingCell = cell;
 			trigger = evt;
 			

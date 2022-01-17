@@ -47,6 +47,14 @@ public abstract class MenuBar extends JMenuBar {
 		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("SelectNone"), mxGraphActions.getSelectNoneAction(), "/img/icon/deselectAll.gif")).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)));
 
 		menu = add(new JMenu(mxResources.get("View")));
+		menu.add(new JMenuItemWithHints(editor.bind(mxResources.get("resetZoom"), new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				editor.getGraphComponent().zoomActual();
+				editor.zoomUpdate(1);
+			}
+		})).setAcceleratorBuilder(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0)));
+		menu.addSeparator();
 		JCheckBoxMenuItem toggleGridItem = new JCheckBoxMenuItem();
 		toggleGridItem.setAction(new AbstractAction(mxResources.get("EnableGrid")) {
 			@Override
