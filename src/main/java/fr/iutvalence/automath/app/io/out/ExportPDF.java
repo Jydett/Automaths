@@ -52,7 +52,6 @@ public class ExportPDF implements Exporter {
 	public void exportAutomaton(String file) {
 		mxGraph graph = guiPanel.getGraphComponent().getGraph();
 		mxRectangle bounds = graph.getGraphBounds();
-		graph.getModel().beginUpdate();
 		Header header = Header.getInstanceOfHeader();
 		StringBuilder sb = new StringBuilder();
 		sb.append("\u00a0\u00a0\u00a0\u00a0\u00a0").append(mxResources.get("HeaderName")).append(":");
@@ -67,6 +66,7 @@ public class ExportPDF implements Exporter {
 		sb.append(header.getModCode());
 		sb.append("\u00a0\u00a0\u00a0\u00a0\u00a0");
 		guiPanel.getUndoManager().setUndoAllowed(false);
+		graph.getModel().beginUpdate();
 		Object obj = graph.insertVertex(graph.getDefaultParent(), null, sb, bounds.getX(), bounds.getY() - 50, 0, 0,
 				infoStyle);
 		graph.getModel().endUpdate();

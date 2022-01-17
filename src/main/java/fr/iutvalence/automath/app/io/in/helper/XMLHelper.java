@@ -8,6 +8,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class XMLHelper {
 
@@ -25,10 +26,10 @@ public class XMLHelper {
                 Element state = (Element) listEtat.item(etat_index);
                 String name = (state.getElementsByTagName("nom").item(0).getTextContent());
                 int id = Integer.parseInt(state.getAttribute("id"));
-                int x = Integer.parseInt(state.getElementsByTagName("cooX").item(0).getTextContent());
-                int y = Integer.parseInt(state.getElementsByTagName("cooY").item(0).getTextContent());
-                boolean initial = Boolean.parseBoolean(state.getElementsByTagName("beginState").item(0).getTextContent());
-                boolean accept = Boolean.parseBoolean(state.getElementsByTagName("finalState").item(0).getTextContent());
+                int x = Optional.ofNullable(state.getElementsByTagName("cooX").item(0)).map(Node::getTextContent).map(Integer::parseInt).orElse(0);
+                int y = Optional.ofNullable(state.getElementsByTagName("cooY").item(0)).map(Node::getTextContent).map(Integer::parseInt).orElse(0);
+                boolean initial = Optional.ofNullable(state.getElementsByTagName("beginState").item(0)).map(Node::getTextContent).map(Boolean::parseBoolean).orElse(false);
+                boolean accept = Optional.ofNullable(state.getElementsByTagName("finalState").item(0)).map(Node::getTextContent).map(Boolean::parseBoolean).orElse(false);
                 NodeList nodeStyle = state.getElementsByTagName("style");
                 if (nodeStyle.getLength() > 0) {
                     allStates.put(id, addState(name, x, y, accept, initial, graph,
@@ -46,7 +47,8 @@ public class XMLHelper {
                 Element link = (Element) listLink.item(etat_index);
                 int etat_depart = Integer.parseInt(link.getElementsByTagName("etat_depart").item(0).getTextContent());
                 int etat_arr = Integer.parseInt(link.getElementsByTagName("etat_arr").item(0).getTextContent());
-                graph.addEdge(link.getElementsByTagName("caractere").item(0).getTextContent(), allStates.get(etat_depart), allStates.get(etat_arr));
+                graph.addEdge(Optional.ofNullable(link.getElementsByTagName("caractere").item(0)).map(Node::getTextContent).orElse(""),
+                    allStates.get(etat_depart), allStates.get(etat_arr));
             }
         }
         graph.getModel().endUpdate();

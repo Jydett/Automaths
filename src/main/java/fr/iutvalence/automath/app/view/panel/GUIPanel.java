@@ -15,23 +15,24 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.handler.mxCellHandler;
 import com.mxgraph.swing.handler.mxEdgeHandler;
 import com.mxgraph.swing.handler.mxElbowEdgeHandler;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxICellEditor;
-import com.mxgraph.util.*;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxPoint;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import fr.iutvalence.automath.app.bridge.BasicAutomatonOperator;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
-import fr.iutvalence.automath.app.model.SimulationProvider;
-import fr.iutvalence.automath.app.view.utils.CellEditor;
 import fr.iutvalence.automath.app.view.frame.AboutFrame;
 import fr.iutvalence.automath.app.view.handler.GuiKeyboardHandler;
 import fr.iutvalence.automath.app.view.handler.UndoHandler;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu;
 import fr.iutvalence.automath.app.view.menu.PopUpMenu.TargetType;
+import fr.iutvalence.automath.app.view.utils.CellEditor;
 import fr.iutvalence.automath.app.view.utils.GridConstants;
 import fr.iutvalence.automath.app.view.utils.RotationVertexHandler;
 import lombok.Getter;
@@ -307,15 +308,14 @@ public abstract class GUIPanel extends JPanel {
 		if (! getGraphComponent().isEnabled()) {
 			return;
 		}
-		int x = e.getX();
-		int y = e.getY();
-		Object cell = graphComponent.getCellAt(x, y);
+		Object selectedCell = graphComponent.getGraph().getSelectionCell();
+
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), frame);
 
 		//Interaction menu on the chart with basic changes such as copy, paste etc.
 		PopUpMenu popUpMenu = newPopupMenu();
-		if (cell != null) {
-			popUpMenu.init(this, ((mxCell)cell), ((mxCell)cell).isVertex() ? TargetType.State : TargetType.Transition);
+		if (selectedCell != null) {
+			popUpMenu.init(this, ((mxCell)selectedCell), ((mxCell)selectedCell).isVertex() ? TargetType.State : TargetType.Transition);
 		} else {
 			popUpMenu.init(this, null, TargetType.GraphComponent);
 		}

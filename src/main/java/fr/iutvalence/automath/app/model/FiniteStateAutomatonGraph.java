@@ -6,7 +6,10 @@ import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.shape.*;
+import com.mxgraph.shape.mxBasicShape;
+import com.mxgraph.shape.mxDefaultTextShape;
+import com.mxgraph.shape.mxDoubleEllipseShape;
+import com.mxgraph.shape.mxEllipseShape;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxPoint;
@@ -17,12 +20,17 @@ import com.mxgraph.view.mxStylesheet;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
-import fr.iutvalence.automath.app.bridge.OperableGraph;
 import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
+import fr.iutvalence.automath.app.bridge.OperableGraph;
 import fr.iutvalence.automath.app.view.shape.BeginEndingStateShape;
 import fr.iutvalence.automath.app.view.shape.BeginStateShape;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.font.GlyphVector;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +54,7 @@ import java.util.Set;
  */
 public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph {
 
-	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1;" + mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_CENTER;
+	public static final String STYLE_STATE = mxConstants.STYLE_FILLCOLOR+"=white;"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black;"+mxConstants.STYLE_FONTSTYLE+"=1;" + mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_CENTER + ";" + mxConstants.STYLE_FONTFAMILY + "=" + Font.MONOSPACED;
 	public static final String STYLE_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	public static final String STYLE_DEFAULT_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=stateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	public static final String STYLE_FINAL_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=endingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
@@ -116,6 +124,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 
 	public FiniteStateAutomatonGraph(IAutomatonOperator automaton) {
 		super();
+		mxConstants.LINESPACING = 1;
 		this.automaton = automaton;
 		registerTextShape();
 		registerStateShapes();
@@ -154,9 +163,12 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		mxDefaultTextShape mxDefaultTextShape = new mxDefaultTextShape() {
 			@Override
 			public void paintShape(mxGraphics2DCanvas canvas, String text, mxCellState state, Map<String, Object> style) {
-				Rectangle rect = state.getLabelBounds().getRectangle();
+				Rectangle rect = state.getRectangle();
 				Graphics2D g = canvas.getGraphics();
 				if (g.getClipBounds() == null || g.getClipBounds().intersects(rect)) {
+					if (text == null || text.trim().isEmpty()) return;
+					String[] lines = text.split("\n");
+					if (lines.length == 0) return;
 					boolean horizontal = mxUtils.isTrue(style, mxConstants.STYLE_HORIZONTAL, true);
 					double scale = canvas.getScale();
 					int x = rect.x;
@@ -168,8 +180,6 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 						g.translate(w / 2 - h / 2, h / 2 - w / 2);
 					}
 
-					String[] lines = text.split("\n");
-
 					Color fontColor = mxUtils.getColor(style, mxConstants.STYLE_FONTCOLOR, Color.black);
 					g.setColor(fontColor);
 					Font scaledFont = mxUtils.getFont(style, scale);
@@ -179,18 +189,9 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 					int scaledFontSize = scaledFont.getSize();
 					double fontScaleFactor = (double)scaledFontSize / (double)fontSize;
 					double fontScaleRatio = fontScaleFactor / scale;
-					int nbLines = lines.length;
+					int height = fm.getHeight();
 
-					y = (int)((double)y + fm.getHeight() * nbLines);
-					Object vertAlign = mxUtils.getString(style, mxConstants.STYLE_VERTICAL_ALIGN, "middle");
-					double vertAlignProportion = 0.5D;
-					if (vertAlign.equals("top")) {
-						vertAlignProportion = 0.0D;
-					} else if (vertAlign.equals("bottom")) {
-						vertAlignProportion = 1.0D;
-					}
 
-					y = (int)((double)y + (1.0D - fontScaleRatio) * (double)h * vertAlignProportion);
 					Object align = mxUtils.getString(style, mxConstants.STYLE_ALIGN, "center");
 					if (align.equals("left")) {
 						x = (int)((double)x + (double)mxConstants.LABEL_INSET * scale);
@@ -198,24 +199,44 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 						x = (int)((double)x - (double)mxConstants.LABEL_INSET * scale);
 					}
 
-					for (String line : lines) {
+					Rectangle[] pixelsBounds = new Rectangle[lines.length];
+					GlyphVector[] glyphVectors = new GlyphVector[lines.length];
+					int totaly = (lines.length - 1) * mxConstants.LINESPACING;
+					for (int i = 0; i < pixelsBounds.length; i++) {
+						glyphVectors[i] = scaledFont.layoutGlyphVector(g.getFontRenderContext(), lines[i].toCharArray(), 0, lines[i].length(), Font.LAYOUT_LEFT_TO_RIGHT);
+						pixelsBounds[i] = glyphVectors[i]
+							.getPixelBounds(g.getFontRenderContext(), 0, 0);
+						totaly = totaly + pixelsBounds[i].height;
+					}
+
+					Object vertAlign = mxUtils.getString(style, mxConstants.STYLE_VERTICAL_ALIGN, "middle");
+					double vertAlignProportion = 0.5D;
+					if (vertAlign.equals("top")) {
+						vertAlignProportion = 0.0D;
+					} else if (vertAlign.equals("bottom")) {
+						vertAlignProportion = 1.0D;
+					}
+					y = y + (int)((double)h * fontScaleRatio * vertAlignProportion);
+					y = y + (int) Math.ceil((double) totaly / 2);
+
+					for (int i = lines.length - 1; i >= 0; i--) {
+						String line = lines[i];
 						int dx = 0;
-						int sw;
+						int sw = pixelsBounds[i].width;
 						if (align.equals("center")) {
-							sw = fm.stringWidth(line);
 							if (horizontal) {
-								dx = (int) Math.ceil((double)(w - sw) / 2);
+								dx = (int) Math.ceil((double) (w - sw) / 2);
 							} else {
 								dx = (h - sw) / 2;
 							}
 						} else if (align.equals("right")) {
-							sw = fm.stringWidth(line);
 							dx = (horizontal ? w : h) - sw;
 						}
 
-						g.drawString(line, x + dx, y);
+						g.drawGlyphVector(glyphVectors[i], x + dx, y - (pixelsBounds[i].height + pixelsBounds[i].y));
+
 						this.postProcessLine(text, line, fm, canvas, x + dx, y);
-						y += fm.getHeight() + mxConstants.LINESPACING;
+						y -= pixelsBounds[i].height + mxConstants.LINESPACING;
 					}
 				}
 			}
