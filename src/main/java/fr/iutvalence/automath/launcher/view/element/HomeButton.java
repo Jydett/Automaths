@@ -1,9 +1,14 @@
 package fr.iutvalence.automath.launcher.view.element;
 
-import java.awt.*;
-import java.awt.geom.*;
 import javax.swing.JButton;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 
 /**
  * Create round button for Home page 
@@ -99,7 +104,7 @@ public class HomeButton extends JButton {
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
-		int diameter = getDiameter();
+		int diameter = getDiameter() - 2;
 		int radius = diameter/2;
 		g.setColor(hisColor);
 

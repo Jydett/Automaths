@@ -188,8 +188,6 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 					int scaledFontSize = scaledFont.getSize();
 					double fontScaleFactor = (double)scaledFontSize / (double)fontSize;
 					double fontScaleRatio = fontScaleFactor / scale;
-					int height = fm.getHeight();
-
 
 					Object align = mxUtils.getString(style, mxConstants.STYLE_ALIGN, "center");
 					if (align.equals("left")) {

@@ -1,21 +1,11 @@
 package fr.iutvalence.automath.app.view.panel;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
-import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.util.mxPoint;
+import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxGraph;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class RecognitionGUIPanel extends GUIPanel {
 	
@@ -28,87 +18,24 @@ public abstract class RecognitionGUIPanel extends GUIPanel {
 	public abstract void initializeTabbedMenu();
 	
 	public abstract void initializeStateSelectorPanel(mxGraph graph);
-	
+
+	private final mxCell[] nextFocus = new mxCell[1];
+
 	@Override
 	public void installListeners() {
-		//Installs mouse wheel listener for zooming
-		MouseWheelListener wheelTracker = e -> {
-			if (e.getSource() instanceof mxGraphOutline || e.isControlDown()) {
-				mouseWheelMovedEvent(e);
-			}
-		};
-	
-		//Handles mouse wheel events in the outline and graph component
-		graphComponent.addMouseWheelListener(wheelTracker);
-	
+		super.installListeners();
+
+		/* Used to prevent multiple edges from one state to another */
 		mxGraph graph = graphComponent.getGraph();
-		graph.addListener(mxEvent.CONNECT_CELL, new mxIEventListener() {
-			int i = 0;
-	
-			@Override
-			public void invoke(Object d, mxEventObject v) {
-				i++;
-				graph.getModel().addListener(mxEvent.END_UPDATE,
-						(sender, evt) -> {
-							if (i > 0) {
-								i = 0;
-								graph.getModel().endUpdate();
-								defaultParallelEdgeLayout.execute(graph.getDefaultParent());
-								graph.getModel().beginUpdate();
-							}
-						}
-				);
-			}
-		});
-	
-		graph.addListener(mxEvent.CELLS_MOVED, (d, v) -> {
-			graph.getModel().endUpdate();
-			defaultParallelEdgeLayout.execute(graph.getDefaultParent());
-			graph.getModel().beginUpdate();
-		});
-	
-		graph.addListener(mxEvent.CELL_CONNECTED, new mxIEventListener() {
+
+		graph.addListener(mxEvent.CELL_CONNECTED, new mxEventSource.mxIEventListener() {
 			@Override
 			public void invoke(Object sender, mxEventObject evt) {
 				Boolean source = (Boolean) evt.getProperty("source");
 				boolean previous = evt.getProperties().containsKey("previous");
-				mxCell edge = (mxCell) evt.getProperties().get("edge");
 				if (!source || previous) {
-					addTransitionAndCollapse(edge);
+					addTransitionAndCollapse((mxCell) evt.getProperties().get("edge"));
 				}
-				if (edge.getGeometry().getPoints() != null) {
-					if (hasConnectionBetween((mxCell) edge.getSource(), (mxCell) edge.getTarget(), edge.getId()) == null) {
-						mxCell opposite = hasConnectionBetween((mxCell) evt.getProperty("previous"), source ? (mxCell) edge.getTarget() : (mxCell) edge.getSource(), edge.getId());
-						if (previous && opposite != null) {
-							removeGeometry(opposite);
-						}
-						removeGeometry(edge);
-					}
-				}
-			}
-
-			private void removeGeometry(mxCell edge) {
-				assert edge != null;
-				assert edge.isEdge();
-				edge.getGeometry().setPoints(null);
-				mxGeometry geometryOfEdge = (mxGeometry) graph.getCellGeometry(edge).clone();
-				List<mxPoint> pointsOfTheEdge = new ArrayList<>(0);
-				geometryOfEdge.setPoints(pointsOfTheEdge);
-				graph.getModel().setGeometry(edge, geometryOfEdge);
-			}
-
-			private mxCell hasConnectionBetween(mxCell cell1, mxCell cell2, String excludeId) {
-				assert cell1.isVertex();
-				assert cell2.isVertex();
-				for (int i = 0; i < cell1.getEdgeCount(); i++) {
-					mxCell anEdge = (mxCell) cell1.getEdgeAt(i);
-					if (anEdge.getSource().getId().equals(cell2.getId()) || anEdge.getTarget().getId().equals(cell2.getId())) {
-						if (! anEdge.getId().equals(excludeId)) {
-							return anEdge;
-						}
-					}
-				}
-				return null;
 			}
 
 			private void addTransitionAndCollapse(mxCell edge) {
@@ -121,50 +48,27 @@ public abstract class RecognitionGUIPanel extends GUIPanel {
 						if (currentSourceEdge.getTarget().getId().equals(edgeTargetId) &&
 								currentSourceEdge.getSource().getId().equals(source.getId())) {
 							graph.getModel().remove(edge);
+							// En fait meme si on enleve comme ca les traitements sont fait
+							// par d'autre listeners dans jgraphX
+							// il n'y a pas moyen d'annuler proprement l'event
+							// donc on ne peut pas par exemple changer la selection :/
+							// on doit donc passer par cette solution dégeu d'un deuxième listener de mxEvent.CONNECT
+							// sur le connectionHandler
+							nextFocus[0] = currentSourceEdge;
 							i = sourceEdgeCount;
 						}
 					}
 				}
 			}
 		});
-	
-		graph.addListener(mxEvent.CELLS_ADDED, (o, evt) -> {
-			Object[] cells = (Object[]) evt.getProperties().get("cells");
-			if (cells.length == 1 && ((mxCell) cells[0]).isEdge()) {
-				defaultParallelEdgeLayout.execute(graph.getDefaultParent());
+
+		// voir commentaire plus haut
+		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, (sender, evt) -> {
+			if (nextFocus[0] != null) {
+				graph.setSelectionCell(nextFocus[0]);
+				nextFocus[0] = null;
 			}
 		});
-	
-		//Installs the popup menu in the graph component
-		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				// Handles context menu on the Mac where the trigger is on mousepressed
-				mouseReleased(e);
-			}
-			public void mouseReleased(MouseEvent e) {
-				Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-				if (cell != null) {
-					cellDescriptorPanel.setCell((mxICell) cell);
-				}
-				if (e.isPopupTrigger()) {
-					showGraphPopupMenu(e);
-				}
-			}
-			public void mouseExited(MouseEvent e) {
-				positionBar.setText("");
-			}
-		});
-		//Installs a mouse motion listener to display the mouse location
-		graphComponent.getGraphControl().addMouseMotionListener(
-			new MouseMotionListener() {
-				public void mouseDragged(MouseEvent e) {
-					mouseLocationChanged(e);
-				}
-	
-				public void mouseMoved(MouseEvent e) {
-					mouseDragged(e);
-				}
-			});
 	}
 
 }

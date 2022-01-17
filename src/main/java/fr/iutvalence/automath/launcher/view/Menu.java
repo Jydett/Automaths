@@ -1,23 +1,24 @@
 package fr.iutvalence.automath.launcher.view;
 
-import java.awt.*;
-import java.awt.event.ActionListener;
+import com.mxgraph.util.mxResources;
+import fr.iutvalence.automath.app.editor.EditorActions.OpenHelpAction;
+import fr.iutvalence.automath.launcher.view.element.HomeButton;
+import fr.iutvalence.automath.launcher.view.element.HomeFakeButtonDeco;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.BorderFactory;
-
-import com.mxgraph.util.mxResources;
-
-import fr.iutvalence.automath.launcher.view.element.HomeFakeButtonDeco;
-import fr.iutvalence.automath.launcher.view.element.HomeButton;
-import fr.iutvalence.automath.app.editor.EditorActions.OpenHelpAction;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.event.ActionListener;
 
 public class Menu {
 
@@ -53,24 +54,25 @@ public class Menu {
 		horizontalBox.add(verticalBox);
 		verticalBox.add(layeredPane);
 
-		leftButton = addButton("", Color.GRAY, null, 70, 148, 300, 300);
-		rightButton = addButton("", Color.LIGHT_GRAY, null, 314, 137, 500, 200);
-
 		JButton btnHelp = new JButton();
 		btnHelp.setBorder(BorderFactory.createEmptyBorder());
 		btnHelp.setContentAreaFilled(false);
 		ImageIcon helpIcon = new ImageIcon(Menu.class.getResource("/img/icon/help.png"));
 		btnHelp.setIcon(helpIcon);
 		btnHelp.setRolloverIcon(helpIcon);
+		btnHelp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnHelp.addActionListener(e -> new OpenHelpAction().actionPerformed(e));
 		btnHelp.setBounds(367, 60, 100, 100);
+		btnHelp.setFocusPainted(false);
 		layeredPane.add(btnHelp);
 
 		JButton btnDeco = new HomeFakeButtonDeco("/img/icon/logo.png");
-		btnDeco.setSelectedIcon(helpIcon);
 		btnDeco.setIcon(new ImageIcon(Menu.class.getResource("/img/index.png")));
 		btnDeco.setBounds(278, 10, 259,228);
 		layeredPane.add(btnDeco);
+
+		leftButton = addButton("", Color.GRAY, null, 70, 148, 300, 300);
+		rightButton = addButton("", Color.LIGHT_GRAY, null, 314, 137, 500, 200);
 
 		panel.add(Box.createGlue(), BorderLayout.SOUTH);
 		panel.add(Box.createGlue(), BorderLayout.WEST);
