@@ -12,6 +12,7 @@ import com.mxgraph.layout.mxPartitionLayout;
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.handler.mxCellHandler;
 import com.mxgraph.swing.handler.mxEdgeHandler;
@@ -20,10 +21,7 @@ import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.view.mxICellEditor;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxRectangle;
-import com.mxgraph.util.mxResources;
+import com.mxgraph.util.*;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
@@ -38,6 +36,8 @@ import fr.iutvalence.automath.app.view.utils.CellEditor;
 import fr.iutvalence.automath.app.view.utils.GridConstants;
 import fr.iutvalence.automath.app.view.utils.RotationVertexHandler;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -62,9 +62,13 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class GUIPanel extends JPanel {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(GUIPanel.class);
 
 	private static final long serialVersionUID = -8393951230686521192L;
 
@@ -122,14 +126,50 @@ public abstract class GUIPanel extends JPanel {
 		initializeTabbedMenu();
 		this.tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		initializeStateSelectorPanel(graph);
-		this.cellDescriptorPanel = new CellDescriptorPane(graph);
+		undoHandler = new UndoHandler();
+		undoHandler.initialize(graph, this);
+		this.cellDescriptorPanel = new CellDescriptorPane(this);
 		initialiseUserActionPanel();
 		setLayout(new BorderLayout());
 		constructEditor();
-		undoHandler = new UndoHandler();
-		undoHandler.initialize(graph, this);
 		installListeners();
-		defaultParallelEdgeLayout = new mxParallelEdgeLayout(graph, 50);
+
+		if (LOGGER.isDebugEnabled()) {
+			mxEventSource[] eventSources = new mxEventSource[] {graph, (mxGraphModel) graph.getModel(), graph.getView()};
+
+			for (int i = 0; i < eventSources.length; i++) {
+
+			}
+//			eventSource.addListener(mxEvent.REPAINT, (source, evt) -> {
+//				String buffer = (graphComponent.getTripleBuffer() != null) ? ""
+//						: " (unbuffered)";
+//				mxRectangle dirty = (mxRectangle) evt
+//						.getProperty("region");
+//
+//				if (dirty == null) {
+//					LOGGER.debug("Repaint all" + buffer);
+//				} else {
+//					LOGGER.debug("Repaint: x=" + (int) (dirty.getX()) + " y="
+//							+ (int) (dirty.getY()) + " w="
+//							+ (int) (dirty.getWidth()) + " h="
+//							+ (int) (dirty.getHeight()) + buffer);
+//				}
+//			});
+		}
+		defaultParallelEdgeLayout = new mxParallelEdgeLayout(graph, 50) {
+			@Override
+			public void execute(Object parent) {
+				if (LOGGER.isDebugEnabled()) {
+					try {
+						throw new RuntimeException("This is a fake error to follow ParallelEdgeLayout call");
+					} catch (Exception e) {
+						StackTraceElement[] stackTrace = e.getStackTrace();
+						LOGGER.debug("ParallelEdgeLayout triggered from " + stackTrace[1]);
+					}
+				}
+				super.execute(parent);
+			}
+		};
 		this.modified = false;
 	}
 
@@ -300,35 +340,39 @@ public abstract class GUIPanel extends JPanel {
 		graphComponent.addMouseWheelListener(wheelTracker);
 
 		mxGraph graph = graphComponent.getGraph();
-//		graph.addListener(mxEvent.CONNECT_CELL, new mxEventSource.mxIEventListener() {
-//			int i = 0;
-//
-//			@Override
-//			public void invoke(Object d, mxEventObject v) {
-//				i++;
-//				graph.getModel().addListener(mxEvent.END_UPDATE,
-//					(sender, evt) -> {
-//						if (i > 0) {
-//							i = 0;
-//							graph.getModel().endUpdate();
-//							defaultParallelEdgeLayout.execute(graph.getDefaultParent());
-//							graph.getModel().beginUpdate();
-//						}
-//					}
-//				);
-//			}
-//		});
+
+		if (LOGGER.isDebugEnabled()) {
+			try {
+				Field[] allEvents = mxEvent.class.getDeclaredFields();
+
+				mxEventSource[] eventSources = new mxEventSource[] {graph, (mxGraphModel) graph.getModel(), graph.getView()};
+
+				for (mxEventSource eventSource : eventSources) {
+					for (Field declaredField : allEvents) {
+						eventSource.addListener((String) declaredField.get(null), new mxEventSource.mxIEventListener() {
+							@Override
+							public void invoke(Object sender, mxEventObject evt) {
+								LOGGER.debug("Event triggered '" + evt.getName() + "'");
+							}
+						});
+					}
+				}
+			} catch (Exception e) {
+				//never happens
+				e.printStackTrace();
+			}
+		}
 
 		graph.addListener(mxEvent.CELLS_MOVED, (d, v) -> {
-			graph.getModel().endUpdate();
+			if (! getUndoManager().isUndoAllowed()) return;
 			defaultParallelEdgeLayout.execute(graph.getDefaultParent());
-			graph.getModel().beginUpdate();
 		});
 
 
 		graph.addListener(mxEvent.CELLS_ADDED, (o, evt) -> {
+			if (! getUndoManager().isUndoAllowed()) return;
 			Object[] cells = (Object[]) evt.getProperties().get("cells");
-			if (cells.length == 1 && ((mxCell) cells[0]).isEdge()) {
+			if (cells.length == 1 && cells[0] instanceof mxCell && ((mxCell) cells[0]).isEdge()) {
 				defaultParallelEdgeLayout.execute(graph.getDefaultParent());
 			}
 		});
@@ -363,25 +407,6 @@ public abstract class GUIPanel extends JPanel {
 					mouseDragged(e);
 				}
 			});
-	}
-
-	protected void installRepaintListener() {
-		graphComponent.getGraph().addListener(mxEvent.REPAINT, (source, evt) -> {
-			String buffer = (graphComponent.getTripleBuffer() != null) ? ""
-					: " (unbuffered)";
-			mxRectangle dirty = (mxRectangle) evt
-					.getProperty("region");
-
-			if (dirty == null){
-				setAppStatusText("Repaint all" + buffer);
-			}
-			else{
-				appStatus.setText("Repaint: x=" + (int) (dirty.getX()) + " y="
-						+ (int) (dirty.getY()) + " w="
-						+ (int) (dirty.getWidth()) + " h="
-						+ (int) (dirty.getHeight()) + buffer);
-			}
-		});
 	}
 
 	protected void mouseLocationChanged(MouseEvent e){

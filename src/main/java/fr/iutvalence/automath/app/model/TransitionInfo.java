@@ -1,15 +1,15 @@
 package fr.iutvalence.automath.app.model;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * Contains the information of a <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.model.mxCell}</a>'s edge form.
  */
 @NoArgsConstructor
-@Data
+@Getter
 public class TransitionInfo implements CellInfo {
-	
+
 	/**
 	 * The source of the transition
 	 */
@@ -23,13 +23,19 @@ public class TransitionInfo implements CellInfo {
 	 * the label of the transition
 	 */
 	public String label;
-	
+
 	public TransitionInfo(String label, StateInfo stateInfo) {
 		this.label = label;
 		this.source = stateInfo;
 		this.destination = null;
 	}
-	
+
+	private TransitionInfo(String label, StateInfo destination, StateInfo source) {
+		this.label = label;
+		this.source = source;
+		this.destination = destination;
+	}
+
 	@Override
 	public String toString() {
 		if(destination == null || source == null) return "";
@@ -43,8 +49,8 @@ public class TransitionInfo implements CellInfo {
 	public boolean isValid() {
 		return destination != null && source != null;
 	}
-	
-	/** Returns the union of the two strings, case insensitive. 
+
+	/** Returns the union of the two strings, case insensitive.
     Takes O( (|S1| + |S2|) ^2 ) time. */
 	public static String union(String s1, String s2){
 	    String s = (s1 + s2).toLowerCase(); //start with entire contents of both strings
@@ -58,6 +64,11 @@ public class TransitionInfo implements CellInfo {
 			}
 	    }
 	    return s;
+	}
+
+	@Override
+	public CellInfo withLabel(String label) {
+		return new TransitionInfo(label, destination, source);
 	}
 
 }

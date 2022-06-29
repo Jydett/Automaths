@@ -11,16 +11,12 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,54 +25,21 @@ import java.util.Map;
  */
 public class ExportXML implements Exporter {
 
-    /**
-     * An editable document
-     */
-    private final Document document;
-    /**
-     * The root element of XML
-     */
-    private final Element racine;
-
-    private final Transformer transformer;
-
-    /**
-     * The map to contain all states of automaton
-     */
-    private final Map<mxCell, Integer> allStates;
-
-    private final FiniteStateAutomatonGraph automaton;
-
-    /**
-     * A constructor of ExportXML, with the parameter graph, and that raises an exception
-     *
-     * @param automaton The graph of application
-     * @throws ParserConfigurationException
-     * @throws TransformerConfigurationException
-     */
-    public ExportXML(FiniteStateAutomatonGraph automaton) throws ParserConfigurationException, TransformerConfigurationException {
-        this.automaton = automaton;
+    @Override
+    public void exportAutomaton(FiniteStateAutomatonGraph graph, DataOutputStream out) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        this.document = builder.newDocument();
-        this.racine = document.createElement("root");
+        Document document = builder.newDocument();
+        Element racine = document.createElement("root");
         document.appendChild(racine);
-        allStates = new HashMap<>();
+        Map<mxCell, Integer> allStates = new HashMap<>();
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        this.transformer = transformerFactory.newTransformer();
-    }
+        Transformer transformer = transformerFactory.newTransformer();
 
-
-    /**
-     * Convert the graph to XML and save the result to an (.xml) file with the specified path in parameter
-     *
-     * @param file The path to saving the file
-     */
-    public void exportAutomaton(String file) {
         Element stateList = document.createElement("liste_etats");
         racine.appendChild(stateList);
         int i = 0;
-        for (mxCell state : automaton.getAllState()) {
+        for (mxCell state : graph.getAllState()) {
             Element xmlState = document.createElement("etat");
             xmlState.setAttribute("id", String.valueOf(i));
             Element nom = document.createElement("nom");
@@ -98,7 +61,7 @@ public class ExportXML implements Exporter {
             cooY.appendChild(document.createTextNode(String.valueOf((int) state.getGeometry().getY())));
             beginState.appendChild(document.createTextNode(String.valueOf(initial)));
             finalState.appendChild(document.createTextNode(String.valueOf(accepted)));
-            double rotation = mxUtils.getDouble(automaton.getCellStyle(state), mxConstants.STYLE_ROTATION, 0.0D);
+            double rotation = mxUtils.getDouble(graph.getCellStyle(state), mxConstants.STYLE_ROTATION, 0.0D);
             if (rotation != 0.0D) {
                 Element style = document.createElement("style");
                 xmlState.appendChild(style);
@@ -111,7 +74,7 @@ public class ExportXML implements Exporter {
 
         Element liste_liens = document.createElement("liste_liens");
         racine.appendChild(liste_liens);
-        for (mxCell trainsition : automaton.getAllTransition()) {
+        for (mxCell trainsition : graph.getAllTransition()) {
             Element lien = document.createElement("lien");
             Element etat_depart = document.createElement("etat_depart");
             Element caractere = document.createElement("caractere");
@@ -135,10 +98,6 @@ public class ExportXML implements Exporter {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
-            transformer.transform(source, new StreamResult(outputStream));
-        } catch (IOException | TransformerException e) {
-            e.printStackTrace();
-        }
+        transformer.transform(source, new StreamResult(out));
     }
 }

@@ -1,10 +1,12 @@
 package fr.iutvalence.automath.app.view.handler;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventSource;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.view.mxGraph;
+import fr.iutvalence.automath.app.model.StateInfo;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
 
 import java.util.ArrayList;
@@ -60,7 +62,16 @@ public class UndoHandler extends mxUndoManager {
 		mxEventSource.mxIEventListener undoHandler = (source, evt) -> {
 			List<mxUndoableEdit.mxUndoableChange> changes = ((mxUndoableEdit) evt
 					.getProperty("edit")).getChanges();
-			graph.setSelectionCells(graph.getSelectionCellsForChanges(changes));
+			Object[] selectionCellsForChanges = graph.getSelectionCellsForChanges(changes);
+			for (Object selectionCellsForChange : selectionCellsForChanges) {
+				if (selectionCellsForChange instanceof mxCell) {
+					Object value = ((mxCell) selectionCellsForChange).getValue();
+					if (value instanceof StateInfo) {
+						((StateInfo) value).refresh(((mxCell) selectionCellsForChange), graph);
+					}
+				}
+			}
+			graph.setSelectionCells(selectionCellsForChanges);
 		};
 		this.addListener(mxEvent.UNDO, undoHandler);
 		this.addListener(mxEvent.REDO, undoHandler);
@@ -89,5 +100,9 @@ public class UndoHandler extends mxUndoManager {
 	public void copyHistory(List<mxUndoableEdit> source, List<mxUndoableEdit> destination) {
 		destination.clear();
 		destination.addAll(source);
+	}
+
+	public boolean isUndoAllowed() {
+		return this.undoAllowed;
 	}
 }

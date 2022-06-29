@@ -1,4 +1,4 @@
-package fr.iutvalence.automath.app.io.in;
+package fr.iutvalence.automath.app.io.in.helper;
 
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.util.mxCellRenderer;

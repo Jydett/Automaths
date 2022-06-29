@@ -8,7 +8,6 @@ import fr.iutvalence.automath.app.exceptions.NextCallOnNonStartedSimulationExcep
 import fr.iutvalence.automath.app.exceptions.NoInitialStateException;
 import fr.iutvalence.automath.app.exceptions.WordIsEmptyException;
 import fr.iutvalence.automath.app.view.panel.GUIPanel;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,7 +63,7 @@ public class SimulationProvider {
 	 * List of green colored states
 	 */
 	private final ArrayList<mxCell> green = new ArrayList<>();
-	
+
 	/**
 	 * A constructor of SimulationProvider, with the parameter graph
 	 * @param editor The panel of application
@@ -73,10 +72,10 @@ public class SimulationProvider {
 		this.editor = editor;
 		this.graph = editor.getGraphComponent().getGraph();
 	}
-	
+
 	/**
 	 * Informed if the simulation is on a state or transition
-	 * @return 	<code>true</code> if the simulation is on a state; 
+	 * @return 	<code>true</code> if the simulation is on a state;
      *			<code>false</code> otherwise.
 	 */
 	public boolean isStatePhase() {
@@ -106,7 +105,7 @@ public class SimulationProvider {
 		}
 		return s;
 	}
-	
+
 	/**
 	 * Start the simulation of the automaton
 	 * @param word The word has tested
@@ -138,12 +137,12 @@ public class SimulationProvider {
 		if (!hasInitial) {
 			throw new NoInitialStateException();
 		}
-		
+
 		color(lastStates.toArray(),"red");
 		this.isStarted = true;
 		this.isStatePhase = true;
 	}
-	
+
 	/**
 	 * Go to the next letter in the simulation
 	 * @return The instance of the object
@@ -236,7 +235,7 @@ public class SimulationProvider {
 		isStarted = false;
 		loopNumber = 0;
 	}
-	
+
 	/**
 	 * Put a color on a set of mxCell
 	 * @param array Object list
@@ -248,7 +247,7 @@ public class SimulationProvider {
 		graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, color,array);
 		graph.getModel().endUpdate();
 	}
-	
+
 	/**
 	 * Reset a color on a set of mxCell
 	 * @param array Object list
@@ -259,7 +258,7 @@ public class SimulationProvider {
 		graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, "black",array);
 		graph.getModel().endUpdate();
 	}
-	
+
 	/**
 	 * Returns the number of loop made
 	 * @return the number of loop made
@@ -267,7 +266,7 @@ public class SimulationProvider {
 	public int getLoopNumber() {
 		return loopNumber;
 	}
-	
+
 	/**
 	 * the state types that the simulation can take
 	 * <ul>
@@ -280,5 +279,5 @@ public class SimulationProvider {
 	public enum SimulationState {
 		RUNNING, ACCEPTED, NO_STATE_FOUND, END
 	}
-	
+
 }

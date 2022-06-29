@@ -12,15 +12,15 @@ public class ExamRecognitionGUIPanel extends RecognitionGUIPanel {
 	public ExamRecognitionGUIPanel() {
 		super(mxResources.get("ExamRecognition"));
 	}
-	
+
 	@Override
 	public void initializeTabbedMenu() {
 		this.tabbedPane = new ExamRecognitionMultiTabbedMenu();
 	}
-	
+
 	@Override
 	public void initializeStateSelectorPanel(mxGraph graph) {
-		this.stateSelectorPanel = new RecognitionStateSelectorPanel();
+		this.stateSelectorPanel = new RecognitionStateSelectorPanel(graph);
 	}
-	
+
 }

@@ -22,7 +22,7 @@ public class ClassicTranslationGUIPanel extends TranslationGUIPanel {
 
 	@Override
 	public void initializeStateSelectorPanel(mxGraph graph) {
-		this.stateSelectorPanel = new StateSelectorPanel();
+		this.stateSelectorPanel = new StateSelectorPanel(graph);
 	}
 
 	@Override

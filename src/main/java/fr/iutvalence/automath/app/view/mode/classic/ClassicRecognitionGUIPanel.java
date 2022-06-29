@@ -12,15 +12,15 @@ public class ClassicRecognitionGUIPanel extends RecognitionGUIPanel {
 	public ClassicRecognitionGUIPanel() {
 		super(mxResources.get("ClassicRecognition"));
 	}
-	
+
 	@Override
 	public void initializeTabbedMenu() {
 		this.tabbedPane = new ClassicRecognitionMultiTabbedMenu(this);
 	}
-	
+
 	@Override
 	public void initializeStateSelectorPanel(mxGraph graph) {
-		this.stateSelectorPanel = new RecognitionStateSelectorPanel();
+		this.stateSelectorPanel = new RecognitionStateSelectorPanel(graph);
 	}
-	
+
 }

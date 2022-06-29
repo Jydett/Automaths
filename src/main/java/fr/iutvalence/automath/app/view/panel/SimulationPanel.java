@@ -7,8 +7,6 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyVetoException;
 
 import javax.swing.*;
 
@@ -25,7 +23,7 @@ import fr.iutvalence.automath.app.exceptions.WordIsEmptyException;
  * The graphical display of the graphical simulation that works with {@link SimulationProvider}
  */
 public class SimulationPanel extends JPanel {
-	
+
 	private static final long serialVersionUID = 3671333670496340210L;
 
 	/**
@@ -37,7 +35,7 @@ public class SimulationPanel extends JPanel {
 	 * The start action
 	 */
 	private final ActionListener beginAction;
-	
+
 	/**
 	 * The IHM with functionality
 	 */
@@ -222,7 +220,7 @@ public class SimulationPanel extends JPanel {
 		 */
 		private int index;
 		/**
-		 * <code>true</code> if we are in simulation; 
+		 * <code>true</code> if we are in simulation;
 		 * <code>false</code> otherwise.
 		 */
 		private boolean isSimulation;
@@ -242,7 +240,7 @@ public class SimulationPanel extends JPanel {
 		}
 
 		/**
-		 * update the current character 
+		 * update the current character
 		 */
 		public void setCurrentChar() {
 			index = simulation.getLoopNumber()-1;
@@ -257,7 +255,7 @@ public class SimulationPanel extends JPanel {
 
 		/**
 		 * To set the status of the simulation if we are in simulation or not
-		 * @param sim 	<code>true</code> if we are in simulation; 
+		 * @param sim 	<code>true</code> if we are in simulation;
 		 *            	<code>false</code> otherwise.
 		 */
 		public void setSimulation(boolean sim) {

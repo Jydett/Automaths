@@ -6,9 +6,7 @@ import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.model.StateInfo;
 import fr.iutvalence.automath.app.model.TransitionInfo;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,34 +22,13 @@ import java.util.Set;
  * </p>
  */
 public class ExportPython implements Exporter {
-
 	/**
-	 * The list to contain all states of automaton
+	 * {@inheritDoc}
 	 */
-	private final Set<mxCell> states;
-
-	/**
-	 * The list to contain all transition of automaton
-	 */
-	private final Set<mxCell> transitions;
-	
-	/**
-	 * A constructor of ExportPython, with the parameter graph
-	 * @param automaton The graph of application 
-	 */
-	public ExportPython(FiniteStateAutomatonGraph automaton){
-		this.states = automaton.getAllState();
-		this.transitions = automaton.getAllTransition();
-	}
-	
-	/**
-	 * Convert the graph to python script and save the result to an (.py) file with the specified path in parameter
-	 * @param file The path to saving the file
-	 */
-	public void exportAutomaton(String file) {
-		if (file.equals("cancel")) {
-			return;
-		}
+	@Override
+	public void exportAutomaton(FiniteStateAutomatonGraph graph, DataOutputStream out) throws Exception {
+		Set<mxCell> states = graph.getAllState();
+		Set<mxCell> transitions = graph.getAllTransition();
 		StringBuilder py = new StringBuilder();
 		StringBuilder language = new StringBuilder();
 		Set<Character> lang = new HashSet<>();
@@ -59,11 +36,11 @@ public class ExportPython implements Exporter {
 		StringBuilder list_of_state_begin = new StringBuilder();
 		StringBuilder list_of_state_end = new StringBuilder();
 		StringBuilder list_of_transition = new StringBuilder();
-		
-		Map<mxCell,Integer> stateMap = new HashMap<>();		
-		
+
+		Map<mxCell,Integer> stateMap = new HashMap<>();
+
 		py.append("automate=(");
-		
+
 		int id = 0;
 		list_of_state.append("{");
 		list_of_state_begin.append("{");
@@ -72,7 +49,7 @@ public class ExportPython implements Exporter {
 		while (it.hasNext()) {
 			mxCell state = it.next();
 			stateMap.put(state, id);
-			
+
 			if (((StateInfo) state.getValue()).isAccepting()) {
 				if (list_of_state_end.length() != 1) {
 					list_of_state_end.append(",");
@@ -94,7 +71,7 @@ public class ExportPython implements Exporter {
 		list_of_state.append("}");
 		list_of_state_begin.append("}");
 		list_of_state_end.append("}");
-		
+
 		list_of_transition.append("{");
 		for (mxCell transition : transitions) {
 			char[] transitionValue = ((TransitionInfo) transition.getValue()).getLabel().toCharArray();
@@ -115,7 +92,7 @@ public class ExportPython implements Exporter {
 			}
 		}
 		list_of_transition.append("}");
-		
+
 		language.append("{");
 		for (Character state : lang) {
 			if (language.length() != 1) {
@@ -124,7 +101,7 @@ public class ExportPython implements Exporter {
 			language.append("'").append(state).append("'");
 		}
 		language.append("}");
-		
+
 		py.append(language).
 		append(",").append(list_of_state).
 		append(",").append(list_of_state_begin).
@@ -132,15 +109,11 @@ public class ExportPython implements Exporter {
 		append(",").append(list_of_transition).
 		append(")").
 		append("\n\ndef isRecognized(mot):\r\n" +
-				"\tA, S, D, R, t = automate\r\n" + 
-				"\tEC = list(D)[0];\r\n" + 
-				"\tfor i in mot:\r\n" + 
-				"\t\tEC = list(t[(EC,i)])[0]\r\n" + 
+				"\tA, S, D, R, t = automate\r\n" +
+				"\tEC = list(D)[0];\r\n" +
+				"\tfor i in mot:\r\n" +
+				"\t\tEC = list(t[(EC,i)])[0]\r\n" +
 				"\treturn EC in R");
-        try (PrintWriter out = new PrintWriter(file, "UTF-8")) {
-            out.write(py.toString());
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		out.writeUTF(py.toString());
 	}
 }

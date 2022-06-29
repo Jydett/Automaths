@@ -1,9 +1,12 @@
 package fr.iutvalence.automath.launcher.view;
 
 import com.mxgraph.util.mxResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserModeMenu implements IMenuListener {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserModeMenu.class);
 	private final Menu menu;
 
 	public UserModeMenu() {
@@ -17,11 +20,13 @@ public class UserModeMenu implements IMenuListener {
 
 	@Override
 	public void onLeftButtonClicked() {
+		LOGGER.info("Classic mode selected");
 		new ClassicAutomatonModeMenu(menu);
 	}
 
 	@Override
 	public void onRightButtonClicked() {
+		LOGGER.info("Exam mode selected");
 		new ExamAutomatonModeMenu(menu);
 	}
 }

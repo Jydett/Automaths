@@ -1,12 +1,14 @@
 package fr.iutvalence.automath.app.view.panel;
 
-import java.awt.*;
+import com.mxgraph.model.mxICell;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventSource;
+import fr.iutvalence.automath.app.model.CellInfo;
+import fr.iutvalence.automath.app.view.utils.AutomathsEvents;
 
 import javax.swing.*;
-
-import com.mxgraph.model.mxICell;
-import com.mxgraph.view.mxGraph;
-import fr.iutvalence.automath.app.model.CellInfo;
+import java.awt.*;
 
 /**
  * The text inside the cell/state
@@ -20,8 +22,19 @@ public class CellDescriptorPane extends JPanel {
 	/**
 	 * Build the description's cell with font, ...
 	 */
-	public CellDescriptorPane(mxGraph graph) {
+	public CellDescriptorPane(GUIPanel guiPanel) {
 		super();
+		mxGraphComponent graphComponent = guiPanel.getGraphComponent();
+		graphComponent.getGraph().getModel().addListener(AutomathsEvents.SELECTED_INFO_UPDATED, (sender, evt) -> refresh());
+		graphComponent.addListener(mxEvent.LABEL_CHANGED, (sender, evt) -> refresh());
+		mxEventSource.mxIEventListener possiblyDeletedEvent = (sender, evt) -> {
+			if (! graphComponent.getGraph().getModel().contains(cell)) {
+				cell = null;
+			}
+			refresh();
+		};
+		guiPanel.getUndoManager().addListener(mxEvent.UNDO, possiblyDeletedEvent);
+		guiPanel.getUndoManager().addListener(mxEvent.REDO, possiblyDeletedEvent);
 		setLayout(new BorderLayout());
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -48,10 +61,14 @@ public class CellDescriptorPane extends JPanel {
 	 * refresh the text
 	 */
 	public void refresh() {
-		String cellData = cell.getValue().toString();
-		if (((CellInfo) cell.getValue()).isValid()) {		
-			textArea.setText(cellData);
-			//acceptingCheckBox.setSelected(((StateInfo) cell.getValue()).isAccepting);
+		if (cell == null) {
+			clear();
+		} else {
+			String cellData = cell.getValue().toString();
+			if (((CellInfo) cell.getValue()).isValid()) {
+				textArea.setText(cellData);
+				//acceptingCheckBox.setSelected(((StateInfo) cell.getValue()).isAccepting);
+			}
 		}
 	}
 	/**

@@ -1,7 +1,7 @@
 package fr.iutvalence.automath.app.view.utils;
 
 import fr.iutvalence.automath.app.bridge.IAutomatonOperator;
-import fr.iutvalence.automath.app.io.in.XMLGraphRenderer;
+import fr.iutvalence.automath.app.io.in.helper.XMLGraphRenderer;
 import fr.iutvalence.automath.app.view.handler.TaskWorkerHandler;
 
 import javax.swing.ImageIcon;
@@ -65,7 +65,7 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	 * To generate an image from a pnj or jpg format
 	 */
 	public synchronized void loadImage() {
-		if(f == null) return;
+		if (f == null) return;
 		if (f.getName().endsWith(".png") || f.getName().endsWith(".jpg")) {
 			ImageIcon tmpIcon = new ImageIcon(f.getPath());
 			if (tmpIcon.getIconWidth() > (getWidth()-10))
@@ -134,10 +134,8 @@ public class FilePreviewerWithWorker extends JComponent implements PropertyChang
 	public void paint(Graphics g) {
 		super.paint(g);
 		sizePreview(fc.getWidth(),fc.getHeight());
-		//refrechImage();
 		if (image != null) {
 			if (image.getIconWidth() != -1) {
-				// les fichiers images
 				int x = getWidth() / 2 - image.getIconWidth() / 2;
 				int y = getHeight() / 2 - image.getIconHeight() / 2;
 				if (y < 0)

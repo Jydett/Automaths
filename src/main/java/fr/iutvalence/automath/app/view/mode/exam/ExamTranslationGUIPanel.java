@@ -12,15 +12,15 @@ public class ExamTranslationGUIPanel extends TranslationGUIPanel {
 	public ExamTranslationGUIPanel() {
 		super(mxResources.get("ExamTranslation"));
 	}
-	
+
 	@Override
 	public void initializeTabbedMenu() {
 		this.tabbedPane = new ExamTranslationMultiTabbedMenu();
 	}
-	
+
 	@Override
 	public void initializeStateSelectorPanel(mxGraph graph) {
-		this.stateSelectorPanel = new StateSelectorPanel();
+		this.stateSelectorPanel = new StateSelectorPanel(graph);
 	}
-	
+
 }

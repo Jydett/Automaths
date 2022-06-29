@@ -39,17 +39,17 @@ import java.util.Set;
 
 /**
  * A custom <a target="_parent" href="http://jgraph.github.io/mxgraph/java/docs/com/mxgraph/view/mxGraph.html">{@link com.mxgraph.view.mxGraph}</a> that represent a finite state automaton
- * 
+ *
  * The vertex on this graph are called states, the edges are called transitions.
  * The standard states are displayed as a back circle, the accepting states are displayed as a double black circle and the
  * starting state have a little arrow facing them in the top-left side.
  * Vertex value are cell info {@link CellInfo}.
- * 
+ *
  * The state on the graph are not resizable, and a transition need a state to be attached to.
- * 
+ *
  * Multi-transitions between the same two states are prohibited and therefore merged.
  * Two opposite transitions on the same two states are rearranged to deter said transitions from overlapping.
- * 
+ *
  * This graph can be minimised and determinized.
  */
 public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph {
@@ -60,7 +60,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 	public static final String STYLE_FINAL_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=endingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
 	public static final String STYLE_TRANSITION = mxConstants.STYLE_ROUNDED+"=1;"+mxConstants.STYLE_STARTARROW + "=" + mxConstants.NONE+";"+mxConstants.STYLE_FONTCOLOR+"=black;"+mxConstants.STYLE_STROKECOLOR+"=black";
 	public static final String STYLE_FINAL_BEGIN_STATE = STYLE_STATE +";"+mxConstants.STYLE_PERIMETER+"="+mxConstants.PERIMETER_ELLIPSE+";"+mxConstants.STYLE_SHAPE+"=beginEndingStateShape;"+mxConstants.STYLE_WHITE_SPACE+"=warp";
-	
+
 	/**
 	 * The radius of a state
 	 */
@@ -106,7 +106,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 	private static void registerShape(String name,mxBasicShape shape) {
 		mxGraphics2DCanvas.putShape(name, shape);
 	}
-	
+
 	/**
 	 * The basic initialisation of a CustomGraph
 	 */
@@ -116,7 +116,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		FiniteStateAutomatonGraph.registerFinalStateShape(new mxDoubleEllipseShape());
 		FiniteStateAutomatonGraph.registerBeginFinalStateShape(new BeginEndingStateShape());
 	}
-	
+
 	/**
 	 * Delegate class to do complexes operations on the graph
 	 */
@@ -153,7 +153,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		//edge.put(mxConstants.STYLE_FONTSIZE,"22");
 		edgeStyle.setDefaultEdgeStyle(edge);
 		super.setStylesheet(edgeStyle);
-		
+
 		registerListeners();
 		new mxParallelEdgeLayout(this).execute(this.getDefaultParent());
 	}
@@ -291,12 +291,12 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		return addCell(vertex, parent);
 	}
 
-	public Object createVertex(Object parent, String id, Object value,double x, double y, double width, 
+	public Object createVertex(Object parent, String id, Object value,double x, double y, double width,
 			double height, String style,boolean relative,boolean accepted,boolean initial) {
 		Object valueInfo = new StateInfo(accepted, initial,value.toString());
 		return super.createVertex(parent, id,valueInfo,x,y,  width, height, style,relative);
 	}
-	public Object createVertex(Object parent, String id, Object value,double x, double y, double width, 
+	public Object createVertex(Object parent, String id, Object value,double x, double y, double width,
 			double height, String style,boolean relative) {
 		return createVertex(parent,id,value,x,y,width,height,style,relative,false,false);
 	}
@@ -318,15 +318,14 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 
 	public void cellLabelChanged(Object cell, Object newValue,boolean autoSize) {
 		if (cell instanceof mxCell) {
-			((CellInfo) ((mxCell) cell).getValue()).setLabel(newValue.toString());
-			super.cellLabelChanged(cell, ((mxCell) cell).getValue(), false);
+			super.cellLabelChanged(cell, ((CellInfo) ((mxCell) cell).getValue()).withLabel(newValue.toString()), false);
 		}
 	}
-	
+
 	public void deleteAllElements() {
 		removeCells(getChildVertices(getDefaultParent()));
 	}
-	
+
 	public Set<mxCell> getAllState() {
 		Object[] listOfCell = getChildCells(getDefaultParent());
 		Set<mxCell> listOfState = new HashSet<>();
@@ -337,7 +336,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		}
 		return listOfState;
 	}
-	
+
 	public Set<mxCell> getAllTransition() {
 		Object[] listOfCell = getChildCells(getDefaultParent());
 		Set<mxCell> transitions = new HashSet<>();
@@ -348,24 +347,24 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		}
 		return transitions;
 	}
-	
+
 	public Object insertEdge(String c, Object source, Object target) {
 		return insertEdge(getDefaultParent(), null,
 				c, source, target, FiniteStateAutomatonGraph.STYLE_TRANSITION);
 	}
-	
+
 	public void minimize() {
 		generateGraphWithAutomaton(automaton.minimize(getAllState(), getAllTransition()),true);
 	}
-	
+
 	public void determinize() {
 		generateGraphWithAutomaton(automaton.determinize(getAllState(), getAllTransition()),true);
 	}
-	
+
 	public void importerExpReg(String text) {
 		generateGraphWithAutomaton(automaton.generateAutomateWithExpReg(text),false);
 	}
-	
+
 	private void generateGraphWithAutomaton(Automaton automate, boolean delParent) {
 		removeCells(getChildVertices(getDefaultParent()));
 		getModel().beginUpdate();
@@ -389,7 +388,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 			cellMap.put(currentStateOfAutomate.hashCode(), cell);
 			i++;
 		}
-		
+
 		for (State currentStateOfAutomate : listOfState) {
 			Object source = cellMap.get(currentStateOfAutomate.hashCode());
 			Set<Transition> listOfTransition = currentStateOfAutomate.getTransitions();
@@ -397,7 +396,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 
 				String c = automaton.getString(currentTransitionOfAutomate);
 				Object target = cellMap.get(currentTransitionOfAutomate.getDest().hashCode());
-				insertEdge(getDefaultParent(), null, 
+				insertEdge(getDefaultParent(), null,
 						c, source, target, FiniteStateAutomatonGraph.STYLE_TRANSITION);
 			}
 		}
@@ -417,7 +416,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		getModel().endUpdate();
 		return obj;
 	}
-	
+
 	public Object addState(String id, double x, double y, boolean accept, boolean initial) {
 		String style;
 		if (accept && initial) {
@@ -434,7 +433,7 @@ public class FiniteStateAutomatonGraph extends mxGraph implements OperableGraph 
 		getModel().endUpdate();
 		return obj;
 	}
-	
+
 	 public Object addState(Object parent, String label,
  			double x, double y, String style,boolean accepted,boolean initial) {
      	return this.insertVertex(parent, null,label, x, y, STATE_RADIUS, STATE_RADIUS,style,accepted,initial);

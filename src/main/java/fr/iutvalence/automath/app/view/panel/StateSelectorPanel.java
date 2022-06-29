@@ -5,6 +5,7 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.util.mxGraphTransferable;
 import com.mxgraph.swing.util.mxSwingConstants;
 import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxGraph;
 import fr.iutvalence.automath.app.model.CellInfo;
 import fr.iutvalence.automath.app.model.FiniteStateAutomatonGraph;
 import fr.iutvalence.automath.app.model.StateInfo;
@@ -22,24 +23,49 @@ public class StateSelectorPanel extends JPanel {
 
 	private final JButton state = new JButton();
 	private final JButton beginState = new JButton();
-	
-	public StateSelectorPanel() {
-		init();
+
+	public StateSelectorPanel(mxGraph graph) {
+		init(graph);
 	}
-	
-	private void init() {
+
+	private void init(mxGraph graph) {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setAlignmentX(Component.CENTER_ALIGNMENT);
 
+		StateInfo info = new StateInfo(false, false, "");
 		configureDraggableButton(state, "/img/state.png",
 				defaultState(FiniteStateAutomatonGraph.STYLE_DEFAULT_STATE),
-				new StateInfo(false, false, ""));
+				info);
+		addSelectedCellModifierOnClick(state, graph, info);
 		add(state);
 
+		StateInfo info1 = new StateInfo(false, true, "");
 		configureDraggableButton(beginState, "/img/begin_state.png",
 				defaultState(FiniteStateAutomatonGraph.STYLE_BEGIN_STATE),
-				new StateInfo(false, true, ""));
+				info1);
+		addSelectedCellModifierOnClick(beginState, graph, info1);
 		add(beginState);
+	}
+
+	protected void addSelectedCellModifierOnClick(JButton button, mxGraph graph, StateInfo info) {
+		final boolean accepting = info.isAccepting();
+		final boolean starting = info.isStarting();
+		button.addActionListener(e -> this.updateSelectedVertexInfo(graph, accepting, starting));
+	}
+
+	private void updateSelectedVertexInfo(mxGraph graph, boolean accepting, boolean starting) {
+		if (graph.getSelectionCount() > 0) {
+			graph.getModel().beginUpdate();
+			for (Object selectionCell : graph.getSelectionCells()) {
+				if (selectionCell instanceof mxCell && ((mxCell) selectionCell).isVertex()) {
+					StateInfo oldInfo = (StateInfo) ((mxCell) selectionCell).getValue();
+					StateInfo newInfo = oldInfo.withValues(starting, accepting, oldInfo.getLabel());
+					graph.getModel().setValue(selectionCell, newInfo);
+					newInfo.refresh(((mxCell) selectionCell), graph);
+				}
+			}
+			graph.getModel().endUpdate();
+		}
 	}
 
 	protected mxCell defaultState(String style) {

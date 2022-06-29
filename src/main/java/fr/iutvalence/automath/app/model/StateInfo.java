@@ -2,10 +2,14 @@ package fr.iutvalence.automath.app.model;
 
 import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 import com.mxgraph.util.mxResources;
+import com.mxgraph.view.mxGraph;
+import fr.iutvalence.automath.app.view.utils.AutomathsEvents;
 import fr.iutvalence.automath.app.view.utils.StyleUtils;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
@@ -15,19 +19,19 @@ import java.util.Map;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
 public class StateInfo implements CellInfo {
 
 	/**
 	 * True if this state is accepting the word
 	 */
 	private boolean accepting;
-	
+
 	/**
 	 * True if the state is a start of the automaton
 	 */
 	private boolean starting;
-	
+
 	/**
 	 * The text on the model of the state
 	 */
@@ -37,7 +41,7 @@ public class StateInfo implements CellInfo {
 	 * Refresh the layout of the state
 	 * @param c the cell linked to this {@link StateInfo}
 	 */
-	public void refresh(mxICell c) {
+	public void refresh(mxICell c, mxGraph graph) {
 		Map<String, String> cellStyle = StyleUtils.parseStyle(c.getStyle());
 		String rotation = cellStyle.get(mxConstants.STYLE_ROTATION);
 		String finalStyle;
@@ -54,6 +58,9 @@ public class StateInfo implements CellInfo {
 			finalStyle = finalStyle + ";" + mxConstants.STYLE_ROTATION + "=" + rotation;
 		}
 		c.setStyle(finalStyle);
+		if (graph.isCellSelected(c)) {
+			((mxEventSource) graph.getModel()).fireEvent(new mxEventObject(AutomathsEvents.SELECTED_INFO_UPDATED, "cell", c));
+		}
 	}
 
 	/**
@@ -76,5 +83,21 @@ public class StateInfo implements CellInfo {
 	public boolean isValid() {
 		return true;
 	}
-	
+
+	@Override
+	public CellInfo withLabel(String label) {
+		return new StateInfo(accepting, starting, label);
+	}
+
+	public StateInfo withValues(boolean starting, boolean accepting, String label) {
+		return new StateInfo(accepting, starting, label);
+	}
+
+	public StateInfo withStarting(boolean starting) {
+		return new StateInfo(accepting, starting, label);
+	}
+
+	public StateInfo withAccepting(boolean accepting) {
+		return new StateInfo(accepting, starting, label);
+	}
 }
